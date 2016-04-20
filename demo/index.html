@@ -19,24 +19,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body unresolved>
 
 
-    <alabs-proposal ipfshash="">
+    <alabs-proposal edit ipfshash="">
     </alabs-proposal>
 
     <script>
       var seedElement = document.querySelector('alabs-proposal');
-      
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-      
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-      
-      document.addEventListener("alabs-proposal-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-      
     </script>
 
   </body>

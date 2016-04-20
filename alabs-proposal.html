@@ -8,13 +8,16 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-button/locals-button.html">
+<link rel="import" href="../locals-item/locals-item.html">
+<link rel="import" href="../locals-input/locals-input.html">
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
 
 Example:
 
-    <alabs-proposal ipfshash="the_ipfshash"></alabs-proposal>
+    <alabs-proposal ipfshash="the_ipfshash" edit></alabs-proposal>
 
 @group Seed Elements
 @element alabs-proposal
@@ -38,13 +41,24 @@ Example:
         max-width: 100px;
       }
     </style>
-    <h1>&lt;alabs-proposal&gt;</h1>
-    <content></content>
-    <p class="author">
-      <img src="{{author.image}}">
-      Cheers,<br/>
-      <span class="name">{{author.name}}</span>
-    </p>
+    <template is="dom-if" if="{{edit}}">
+      <h1>New proposal</h1>
+      <p>The current cost for a new proposal is Δ<span>{{cost}}</span>.</p>
+      <locals-input bind-value="{{author.name}}" label="Your name"></locals-input>
+      <locals-input bind-value="{{subject}}" label="Proposal title"></locals-input>
+      <locals-input bind-value="{{startdate}}" label="Startdate"></locals-input>
+      <locals-input bind-value="{{enddate}}" label="Enddate"></locals-input>
+      <locals-input bind-value="{{description}}" multiline label="Description"></locals-input>
+      <p>Deliverables:</p>
+      <template is="dom-repeat" items="{{deliverables}}">
+        <locals-button green on-tap="removedeliverable">X</locals-button>
+        <locals-input bind-value="{{new_del_descr}}" label="Description"></locals-input>
+        <locals-input bind-value="{{new_del_budget}}" label="Budget"></locals-input>
+      </template>
+      <p>Total budget: <span>{{mathdeliverables}}</span></p>
+      <locals-button green on-tap="adddeliverable">Add</locals-button>
+      <locals-button green on-tap="saveProposal">Save</locals-button>
+    </template>
   </template>
 
 </dom-module>
@@ -63,6 +77,22 @@ Example:
        */
       ipfshash: {
         type: String
+      },
+
+      /**
+       * The user's primary eth wallet account
+       * @type {{account: string}}
+       */
+      account: {
+        type: String
+      },
+
+      /**
+       * Boolean, triggers edit / read mode
+       * @type {{edit: boolean}}
+       */
+      edit: {
+        type: Boolean
       },
 
       /**
@@ -116,7 +146,15 @@ Example:
       deliverables: {
         type: Array,
         value: [{ title: 'Deliverable 1', description: 'Lorem ipsum sit dolor et amet.', budget: 12 }]
-      }
+      },
+
+      /** The cost of creating a new proposal
+      * @type {{cost: number}}
+      */
+      cost: {
+        type: Number,
+        value: 2.11
+      },
 
     },
 
