@@ -11,6 +11,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../locals-button/locals-button.html">
 <link rel="import" href="../locals-item/locals-item.html">
 <link rel="import" href="../locals-input/locals-input.html">
+<link rel="import" href="../ipfs-upload/ipfs-upload.html">
+<link rel="import" href="../firebase-element/firebase.html">
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
@@ -30,33 +32,31 @@ Example:
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
-      }
-  
-      .author img {
-        display: block;
-        float: left;
-        margin-right: 5px;
-        max-height: 100px;
-        max-width: 100px;
       }
     </style>
+
+    <ipfs-upload id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
+
     <template is="dom-if" if="{{edit}}">
       <h1>New proposal</h1>
-      <p>The current cost for a new proposal is Δ<span>{{cost}}</span>.</p>
+      <p>The current cost for a new proposal is Δ<span>2</span>.</p>
       <locals-input bind-value="{{author.name}}" label="Your name"></locals-input>
       <locals-input bind-value="{{subject}}" label="Proposal title"></locals-input>
       <locals-input bind-value="{{startdate}}" label="Startdate"></locals-input>
       <locals-input bind-value="{{enddate}}" label="Enddate"></locals-input>
       <locals-input bind-value="{{description}}" multiline label="Description"></locals-input>
       <p>Deliverables:</p>
-      <template is="dom-repeat" items="{{deliverables}}">
-        <locals-button green on-tap="removedeliverable">X</locals-button>
-        <locals-input bind-value="{{new_del_descr}}" label="Description"></locals-input>
-        <locals-input bind-value="{{new_del_budget}}" label="Budget"></locals-input>
-      </template>
-      <p>Total budget: <span>{{mathdeliverables}}</span></p>
+      <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
+      <locals-input bind-value="{{new_del_budget}}" value="{{new_del_budget}}" label="Budget"></locals-input>
       <locals-button green on-tap="adddeliverable">Add</locals-button>
+      <template is="dom-repeat" items="{{deliverables}}">
+        <div id="{{index}}">
+          <p>{{item.description}}</p>
+          <p>Δ<span>{{item.budget}}</span></p>
+          <locals-button green on-tap="removedeliverable" key="{{index}}">{{index}}</locals-button>
+        </div>
+      </template>
+      <p>Total budget: Δ<span>{{cost}}</span></p>
       <locals-button green on-tap="saveProposal">Save</locals-button>
     </template>
   </template>
@@ -98,7 +98,7 @@ Example:
       /**
        * The author of the vote, an object with human readable name and eth address. 
        *
-       * @type {{name: string, addr: string}}
+       * @type {{name: string, address: string}}
        */
       author: {
         type: Object,
@@ -106,7 +106,7 @@ Example:
         value: function() {
           return {
             name:  'Dimitri Glazkov',
-            addr: '0x...',
+            address: '0x...',
           };
         }
       },
@@ -145,7 +145,7 @@ Example:
       */
       deliverables: {
         type: Array,
-        value: [{ title: 'Deliverable 1', description: 'Lorem ipsum sit dolor et amet.', budget: 12 }]
+        value: [{description: 'een', budget: 1},{description: 'twee', budget: 2},{description: 'drie', budget: 3}]
       },
 
       /** The cost of creating a new proposal
@@ -153,7 +153,7 @@ Example:
       */
       cost: {
         type: Number,
-        value: 2.11
+        value: 0
       },
 
     },
@@ -194,25 +194,73 @@ Example:
      * @detail {{sound: String}}
      */
 
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
+     /**
+     * adddeliverable: this adds a new empty deliverable fieldset and adds to current values to the deliverables array. The total cost will be re-calculated.
      */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'alabs-proposal says, ' + response;
+    adddeliverable: function() {
+      if(this.new_del_descr && this.new_del_budget){
+        this.push('deliverables', { description: this.new_del_descr, budget: Number(this.new_del_budget) });
+        this.new_del_descr = null;
+        this.new_del_budget = null;
+        this._calccost();
+      }
     },
 
     /**
-     * Attempt to destroy this element's enemies with a beam of light!
-     *
-     * Or, at least, dispatch an event in the vain hope that someone else will
-     * do the zapping.
+     * removedeliverable: this removes a deliverable from the deliverables array. The total cost will be re-calculated.
      */
-    fireLasers: function() {
-      this.fire('alabs-proposal-lasers', {sound: 'Pew pew!'});
+    removedeliverable: function(e){
+      var index = this.deliverables.indexOf(Number(e.target.key));
+      this.deliverables.splice(index,1);
+      var elem = document.getElementById(e.target.key);
+      elem.remove();
+      this._calccost();
+    },
+
+    /**
+     * saveProposal: this saves the proposal on IPFS, Firebase, and stores the IPFS hash on Ethereum.
+     */
+    saveProposal: function() {
+        var self = this;
+        var proposal = {};
+        proposal.author = { name: this.author.name, address: this.author.address };
+        proposal.subject = this.subject;
+        proposal.description = this.description;
+        proposal.deliverables = this.deliverables;
+        proposal.startdate = this.startdate;
+        proposal.enddate = this.enddate;
+        proposal.cost = this.cost;
+
+        // Add the proposal object to IPFS
+        this.ipfs.add([new this.ipfs.Buffer(JSON.stringify(proposal))], function(err, res){
+          if(!err){
+            console.log('ipfs result: ',res[0].Hash);
+            self.ipfshash = res[0].Hash;
+          }
+        });
+
+        proposal.ipfshash = self.ipfshash;
+
+        // Save the IPFS hash to firebase (our redis)
+        var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
+        var postref = fb.push(proposal);
+
+        // Save the IPFS hash to a smart contract
+        // @Sponnet vul dat maar lekker in jonge
+        proposal.fbpostref = postref.key();
+
+    },
+
+    /**
+     * _calccost: this calculates the total of deliverables costs.
+     */
+    _calccost: function(){
+      var cost = 0;
+      for (var i = this.deliverables.length - 1; i >= 0; i--) {
+        console.log(this.deliverables[i].budget);
+        cost = cost + this.deliverables[i].budget;
+      };
+      this.cost = cost;
     }
 
   });
