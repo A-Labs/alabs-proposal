@@ -35,7 +35,7 @@ Example:
       }
     </style>
 
-    <ipfs-upload id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
+    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
 
     <template is="dom-if" if="{{edit}}">
       <h1>New proposal</h1>
@@ -58,6 +58,10 @@ Example:
       </template>
       <p>Total budget: Δ<span>{{cost}}</span></p>
       <locals-button green on-tap="saveProposal">Save</locals-button>
+    </template>
+
+    <template is="dom-if" if="{{!edit}}">
+      <h1>No edit mode</h1>
     </template>
   </template>
 
