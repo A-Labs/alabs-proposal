@@ -61,7 +61,21 @@ Example:
     </template>
 
     <template is="dom-if" if="{{!edit}}">
-      <h1>No edit mode</h1>
+      <h1>{{subject}}</h1>
+      <p><span>{{description}}</span></p>
+      <p><span>{{startdate}}</span></p>
+      <p><span>{{enddate}}</span></p>
+      <p><span>{{cost}}</span></p>
+      <h2>Deliverables:</h2>
+      <template is="dom-repeat" items="{{deliverables}}">
+        <div id="{{index}}">
+          <p>{{item.description}}</p>
+          <p>Δ<span>{{item.budget}}</span></p>
+        </div>
+      </template>
+      <h2>Voting</h2>
+      <locals-button green on-tap="removedeliverable"><span>21</span>% Agree</locals-button>
+      <locals-button red on-tap="removedeliverable"><span>79</span>% Disagree</locals-button>
     </template>
   </template>
 
@@ -96,7 +110,8 @@ Example:
        * @type {{edit: boolean}}
        */
       edit: {
-        type: Boolean
+        type: Boolean,
+        value: false
       },
 
       /**
@@ -159,6 +174,14 @@ Example:
         type: Number,
         value: 0
       },
+
+      /** IPFS object
+      * @type {{ipfs: object}}
+      */
+      ipfs: {
+        type: Object,
+        observer: '_ipfshash'
+      }
 
     },
 
@@ -240,19 +263,51 @@ Example:
           if(!err){
             console.log('ipfs result: ',res[0].Hash);
             self.ipfshash = res[0].Hash;
+            proposal.ipfshash = res[0].Hash;
+            var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
+            var postref = fb.push(proposal);
+            proposal.fbpostref = postref.key();
           }
         });
 
-        proposal.ipfshash = self.ipfshash;
+        //proposal.ipfshash = self.ipfshash;
 
         // Save the IPFS hash to firebase (our redis)
-        var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
-        var postref = fb.push(proposal);
-
+       
         // Save the IPFS hash to a smart contract
         // @Sponnet vul dat maar lekker in jonge
-        proposal.fbpostref = postref.key();
+        
 
+    },
+
+    /**
+     * _ipfshash: this gets the ipfs hash, resolves it and gets us values.
+     */
+    _ipfshash: function(){
+      if(!this.edit && this.ipfs){
+        var self = this;
+        this.ipfs.cat(this.ipfshash).then(function(res){
+          var buf = '';
+            res
+            .on('error', (err) => {
+              expect(err).to.not.exist
+            })
+            .on('data', (data) => {
+              buf += data
+            })
+            .on('end', () => {
+              console.log(buf);
+              var object = JSON.parse(buf);
+              self.author = { name: object.author.name, address: object.author.address };
+              self.subject = object.subject;
+              self.description = object.description;
+              self.deliverables = object.deliverables;
+              self.startdate = object.startdate;
+              self.enddate = object.enddate;
+              self.cost = object.cost;
+            });
+        });
+      }
     },
 
     /**
