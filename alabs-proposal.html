@@ -8,6 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../locals-style/locals-style.html">
+
 <link rel="import" href="../locals-button/locals-button.html">
 <link rel="import" href="../locals-item/locals-item.html">
 <link rel="import" href="../locals-input/locals-input.html">
@@ -33,22 +35,51 @@ Example:
       :host {
         display: block;
       }
+      .canvas {
+        @apply(--locals-canvas);
+      }
+     .whitespace {
+      height: 20px;
+     }
+      h1 {
+       @apply(--locals-font-h1);
+      }
+      h2 {
+       @apply(--locals-font-h2);
+      }
+      h3 {
+       @apply(--locals-font-h3);
+      }
+      h4 {
+       @apply(--locals-font-h4);
+      }
+      p {
+       @apply(--locals-font-body1);
+      }
+
     </style>
+
+<div class="canvas">
 
     <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
 
     <template is="dom-if" if="{{edit}}">
       <h1>New proposal</h1>
       <p>The current cost for a new proposal is Δ<span>2</span>.</p>
+      <div class="whitespace"></div>
       <locals-input bind-value="{{author.name}}" label="Your name"></locals-input>
       <locals-input bind-value="{{subject}}" label="Proposal title"></locals-input>
       <locals-input bind-value="{{startdate}}" label="Startdate"></locals-input>
       <locals-input bind-value="{{enddate}}" label="Enddate"></locals-input>
       <locals-input bind-value="{{description}}" multiline label="Description"></locals-input>
+      <div class="whitespace"></div>
+      <div class="whitespace"></div>
       <p>Deliverables:</p>
       <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
       <locals-input bind-value="{{new_del_budget}}" value="{{new_del_budget}}" label="Budget"></locals-input>
-      <locals-button green on-tap="adddeliverable">Add</locals-button>
+      <div class="whitespace"></div>
+      <div class="whitespace"></div>
+      <locals-button on-tap="adddeliverable">Add</locals-button>
       <template is="dom-repeat" items="{{deliverables}}">
         <div id="{{index}}">
           <p>{{item.description}}</p>
@@ -58,6 +89,7 @@ Example:
       </template>
       <p>Total budget: Δ<span>{{cost}}</span></p>
       <locals-button green on-tap="saveProposal">Save</locals-button>
+
     </template>
 
     <template is="dom-if" if="{{!edit}}">
@@ -77,6 +109,9 @@ Example:
       <locals-button green on-tap="removedeliverable"><span>21</span>% Agree</locals-button>
       <locals-button red on-tap="removedeliverable"><span>79</span>% Disagree</locals-button>
     </template>
+
+</div>
+
   </template>
 
 </dom-module>
