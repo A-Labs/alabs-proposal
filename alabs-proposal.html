@@ -94,7 +94,8 @@ Example:
        * @type {{ipfshash: string}}
        */
       ipfshash: {
-        type: String
+        type: String,
+        observer: '_ipfshash'
       },
 
       /**
@@ -179,8 +180,7 @@ Example:
       * @type {{ipfs: object}}
       */
       ipfs: {
-        type: Object,
-        observer: '_ipfshash'
+        type: Object
       }
 
     },
