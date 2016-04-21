@@ -267,7 +267,7 @@ Example:
             var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
             var postref = fb.push(proposal);
             proposal.fbpostref = postref.key();
-            self.fire('proposalAdded');
+            self.fire('proposal-added');
           }
         });
 
