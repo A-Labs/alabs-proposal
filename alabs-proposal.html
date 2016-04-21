@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../locals-input/locals-input.html">
 <link rel="import" href="../ipfs-upload/ipfs-upload.html">
 <link rel="import" href="../firebase-element/firebase.html">
+<link rel="import" href="../alabs-datetime/alabs-datetime.html">
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
@@ -91,8 +92,8 @@ Example:
     <template is="dom-if" if="{{!edit}}">
       <h1>{{subject}}</h1>
       <p><span>{{description}}</span></p>
-      <p><span>{{startdate}}</span></p>
-      <p><span>{{enddate}}</span></p>
+      <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
+      <p><alabs-datetime timestamp="{{enddate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{cost}}</span></p>
       <h2>Deliverables:</h2>
       <template is="dom-repeat" items="{{deliverables}}">
