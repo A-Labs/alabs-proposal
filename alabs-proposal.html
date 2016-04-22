@@ -15,6 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../ipfs-upload/ipfs-upload.html">
 <link rel="import" href="../firebase-element/firebase.html">
 <link rel="import" href="../alabs-datetime/alabs-datetime.html">
+<script src="../pikaday/pikaday.js"></script>
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
@@ -71,8 +72,7 @@ Example:
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-input bind-value="{{author.name}}" label="Your name"></locals-input>
       <locals-input bind-value="{{subject}}" label="Proposal title"></locals-input>
-      <locals-input bind-value="{{startdate}}" label="Startdate"></locals-input>
-      <locals-input bind-value="{{enddate}}" label="Enddate"></locals-input>
+      <input id="datapicker2" bind-value="{{enddate}}" label="Enddate"></input>
       <locals-input bind-value="{{description}}" multiline label="Description"></locals-input>
       <p>Deliverables:</p>
       <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
@@ -232,6 +232,7 @@ Example:
       // This is a good place to perform any work related to your element's
       // visual state or active behavior (measuring sizes, beginning animations,
       // loading resources, etc).
+     
     },
 
     detached: function() {
@@ -355,3 +356,4 @@ Example:
   });
 
 </script>
+
