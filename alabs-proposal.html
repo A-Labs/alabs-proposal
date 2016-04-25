@@ -89,7 +89,13 @@ Example:
     </template>
 
     <template is="dom-if" if="{{!edit}}">
+
+      <iron-pages selected="{{pageselected}}">
+
+      <section>
+
       <h1>{{subject}}</h1>
+      <p><span>{{author.name}}</span></p>
       <p><span>{{description}}</span></p>
       <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><alabs-datetime timestamp="{{enddate}}" format="LLLL"></alabs-datetime></p>
@@ -102,9 +108,22 @@ Example:
         </div>
       </template>
       <h2>Voting</h2>
-      <locals-button green on-tap="removedeliverable"><span>21</span>% Agree</locals-button>
-      <locals-button red on-tap="removedeliverable"><span>79</span>% Disagree</locals-button>
+      <locals-button green on-tap="voteyes"><span>21</span>% Agree</locals-button>
+      <locals-button red on-tap="voteno"><span>79</span>% Disagree</locals-button>
+
+    </section>
+
+    <section>
+      <h2>Vote progress:</h2>
+      <ul id="log">
+      </ul>
+    </section>
+
+    </iron-pages>
+
     </template>
+
+
   </template>
 </dom-module>
 
@@ -215,6 +234,7 @@ Example:
     // Element Lifecycle
 
     ready: function() {
+      this.pageselected = 0;
       // `ready` is called after all elements have been configured, but
       // propagates bottom-up. This element's children are ready, but parents
       // are not.
@@ -348,6 +368,16 @@ Example:
         cost = cost + this.deliverables[i].budget;
       };
       this.cost = cost;
+    },
+
+    voteyes: function(){
+      console.log('yes vote');
+      this.pageselected = 1;
+    },
+
+    voteno: function(){
+      console.log('no vote');
+      this.pageselected = 1;
     }
 
   });
