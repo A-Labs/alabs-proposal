@@ -372,14 +372,26 @@ Example:
       this.cost = cost;
     },
 
+    faketransactionlog: function(){
+      var self = this;
+      this.setInterval(function(){
+        var ul = document.getElementById("ul");
+        var item = document.createElement("li");
+        item.innerHTML = 'item';
+        ul.appendChild(item);
+      }, 3000);
+    },
+
     voteyes: function(){
       console.log('yes vote');
       this.pageselected = 1;
+      this.faketransactionlog();
     },
 
     voteno: function(){
       console.log('no vote');
       this.pageselected = 1;
+      this.faketransactionlog();
     },
 
     cancel: function(){
