@@ -398,6 +398,8 @@ Example:
     cancel: function(){
       window.clearInterval();
       this.pageselected = 0;
+      var ul = document.getElementById("log");
+      ul.remove();
     }
 
   });
