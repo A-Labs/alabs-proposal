@@ -115,6 +115,7 @@ Example:
 
     <section>
       <h2>Vote progress:</h2>
+      <locals-button red on-tap="cancel">Cancel</locals-button>
       <ul id="log">
       </ul>
     </section>
@@ -379,6 +380,10 @@ Example:
     voteno: function(){
       console.log('no vote');
       this.pageselected = 1;
+    },
+
+    cancel: function(){
+      this.pageselected = 0;
     }
 
   });
