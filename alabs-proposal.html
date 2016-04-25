@@ -374,8 +374,9 @@ Example:
 
     faketransactionlog: function(){
       var self = this;
+      var ul = document.getElementById("log");
+
       window.setInterval(function(){
-        var ul = document.getElementById("ul");
         var item = document.createElement("li");
         item.innerHTML = 'item';
         ul.appendChild(item);
