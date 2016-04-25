@@ -116,8 +116,7 @@ Example:
     <section>
       <h2>Vote progress:</h2>
       <locals-button red on-tap="cancel">Cancel</locals-button>
-      <ul id="log">
-      </ul>
+      <div id="log"></div>
     </section>
 
     </iron-pages>
@@ -374,7 +373,11 @@ Example:
 
     faketransactionlog: function(){
       var self = this;
-      var ul = document.getElementById("log");
+      var log = document.getElementById("log");
+      var ul = document.createElement("ul");
+      ul.id = "ul";
+
+      log.appendChild(ul);
 
       window.setInterval(function(){
         var item = document.createElement("li");
