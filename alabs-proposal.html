@@ -350,7 +350,7 @@ Example:
 
       var self = this;
       var proposal = {};
-      proposal.author = { name: this.author.name, address: this.author.address };
+      proposal.author = { name: this.author.name, address: this.account };
       proposal.subject = this.subject;
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
@@ -389,7 +389,7 @@ Example:
               nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
             };
 
-            console.log("ETHEREUM TRANSACTION\n", proposal.author.account, proposal.budget, proposal.description);
+            console.log("ETHEREUM TRANSACTION\n", proposal.account, proposal.budget, proposal.description);
 
             // var result = myContractInstance.newProposal.sendTransaction(proposal.author.account, proposal.budget, proposal.description, null, options,
             //   function(err, result) {
