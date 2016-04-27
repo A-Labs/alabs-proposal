@@ -390,21 +390,21 @@ Example:
 
             console.log("ETHEREUM TRANSACTION\n", account, proposal.budget, proposal.description);
 
-            // var result = myContractInstance.newProposal.sendTransaction(proposal.account, proposal.budget, proposal.description, null, options,
-            //   function(err, result) {
-            //     if (err != null) {
-            //       console.log(err);
-            //       console.log("ERROR: Transaction didn't go through. See console.");
-            //     } else {
-            //       console.log("Transaction Successful!");
-            //       console.log('Tx hash=',result);
-            //       // set vote status to TxHash received 
-            //       //self.votestatus = 2;
-            //       self.transactionHash = result;
-            //       console.log('transactionHash: ', result);
-            //     }
-            //   });
-            // });
+            var result = myContractInstance.newProposal.sendTransaction(proposal.account, proposal.budget, proposal.description, null, options,
+              function(err, result) {
+                if (err != null) {
+                  console.log(err);
+                  console.log("ERROR: Transaction didn't go through. See console.");
+                } else {
+                  console.log("Transaction Successful!");
+                  console.log('Tx hash=',result);
+                  // set vote status to TxHash received 
+                  //self.votestatus = 2;
+                  self.transactionHash = result;
+                  console.log('transactionHash: ', result);
+                }
+              });
+            });
           });
         }
       });
