@@ -75,6 +75,7 @@ Example:
 
     <section>
       <h1>New proposal</h1>
+      <p>Your account: <span>{{account}}</span></p>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-input bind-value="{{subject}}" label="Proposal title" placeholder="I want to order some food"></locals-input>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
@@ -102,7 +103,7 @@ Example:
       <h1>{{subject}}</h1>
       <p><span>{{description}}</span></p>
       <p>Voting starts: <alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>{{author.name}}</span></p>
+      <p><span>{{author}}</span></p>
       <p><span>{{budget}}</span> Δ</p>
       <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
       <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
@@ -124,7 +125,7 @@ Example:
       <section>
 
       <h1>{{subject}}</h1>
-      <p><span>{{author.name}}</span></p>
+      <p><span>{{author}}</span></p>
       <p><span>{{description}}</span></p>
       <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><alabs-datetime timestamp="{{enddate}}" format="LLLL"></alabs-datetime></p>
