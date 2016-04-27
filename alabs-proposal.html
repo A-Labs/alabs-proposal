@@ -81,7 +81,7 @@ Example:
       <locals-input date label="Startdate" unixts="{{startdate}}"></locals-input>
       <small>(Stakeholders can vote for a week)</small>
       <div class="whitespace"></div>
-      <locals-input bind-value="{{author.name}}" label="Your name" placeholder="Johnny Smith"></locals-input>
+      <locals-input bind-value="{{author}}" label="Your name" placeholder="Johnny Smith"></locals-input>
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
       <div class="whitespace"></div>
@@ -196,14 +196,7 @@ Example:
        * @type {{name: string, address: string}}
        */
       author: {
-        type: Object,
-        // He who 
-        value: function() {
-          return {
-            name:  'Dimitri Glazkov',
-            address: this.account,
-          };
-        }
+        type: String
       },
 
       /** The subject of the proposal
@@ -350,7 +343,8 @@ Example:
 
       var self = this;
       var proposal = {};
-      proposal.author = { name: this.author.name, address: this.author.address };
+      proposal.author = this.author;
+      proposal.account: this.account;
       proposal.subject = this.subject;
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
