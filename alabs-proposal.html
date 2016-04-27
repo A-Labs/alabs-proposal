@@ -376,9 +376,9 @@ Example:
 
             var gasPrice = result.toNumber(10);
 
-            var account = web3.toChecksumAddress(self.account);
+            var account = self.web3.toChecksumAddress(self.account);
 
-            console.log('account: ', account);
+            console.log('fixed account(?): ', account);
 
             var options = {
               from: self.account,
@@ -390,7 +390,7 @@ Example:
 
             console.log("ETHEREUM TRANSACTION\n", account, proposal.budget, proposal.description);
 
-            // var result = myContractInstance.newProposal.sendTransaction(proposal.author.account, proposal.budget, proposal.description, null, options,
+            // var result = myContractInstance.newProposal.sendTransaction(proposal.account, proposal.budget, proposal.description, null, options,
             //   function(err, result) {
             //     if (err != null) {
             //       console.log(err);
