@@ -390,7 +390,7 @@ Example:
 
             console.log("ETHEREUM TRANSACTION\n", account, proposal.budget, proposal.description);
 
-            var result = myContractInstance.newProposal.sendTransaction(proposal.account, proposal.budget, proposal.description, null, options,
+            var result = myContractInstance.newProposal.sendTransaction(account, proposal.budget, proposal.description, null, options,
               function(err, result) {
                 if (err != null) {
                   console.log(err);
