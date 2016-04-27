@@ -201,7 +201,7 @@ Example:
         value: function() {
           return {
             name:  'Dimitri Glazkov',
-            address: '0x...',
+            address: this.account,
           };
         }
       },
@@ -350,7 +350,7 @@ Example:
 
       var self = this;
       var proposal = {};
-      proposal.author = { name: this.author.name, address: this.account };
+      proposal.author = { name: this.author.name, address: this.author.address };
       proposal.subject = this.subject;
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
