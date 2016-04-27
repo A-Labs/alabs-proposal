@@ -381,6 +381,10 @@ Example:
 
             var gasPrice = result.toNumber(10);
 
+            var account = web3.toChecksumAddress(self.account);
+
+            console.log('account: ', account);
+
             var options = {
               from: self.account,
               //value: 1 * 1e18,
@@ -389,7 +393,7 @@ Example:
               nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
             };
 
-            console.log("ETHEREUM TRANSACTION\n", proposal.account, proposal.budget, proposal.description);
+            console.log("ETHEREUM TRANSACTION\n", account, proposal.budget, proposal.description);
 
             // var result = myContractInstance.newProposal.sendTransaction(proposal.author.account, proposal.budget, proposal.description, null, options,
             //   function(err, result) {
