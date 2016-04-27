@@ -8,10 +8,13 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+
 <link rel="import" href="../locals-button/locals-button.html">
 <link rel="import" href="../locals-item/locals-item.html">
 <link rel="import" href="../locals-style/locals-style.html">
 <link rel="import" href="../locals-input/locals-input.html">
+<link rel="import" href="../locals-textarea/locals-textarea.html">
 <link rel="import" href="../ipfs-upload/ipfs-upload.html">
 <link rel="import" href="../firebase-element/firebase.html">
 <link rel="import" href="../alabs-datetime/alabs-datetime.html">
@@ -67,25 +70,51 @@ Example:
     <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
 
     <template is="dom-if" if="{{edit}}">
+
+    <iron-pages selected="{{editselected}}">
+
+    <section>
       <h1>New proposal</h1>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
-      <locals-input bind-value="{{author.name}}" label="Your name"></locals-input>
-      <locals-input bind-value="{{subject}}" label="Proposal title"></locals-input>
-      <input id="datapicker2" bind-value="{{enddate}}" label="Enddate"></input>
-      <locals-input bind-value="{{description}}" multiline label="Description"></locals-input>
-      <p>Deliverables:</p>
-      <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
-      <locals-input bind-value="{{new_del_budget}}" value="{{new_del_budget}}" label="Budget"></locals-input>
+      <locals-input bind-value="{{subject}}" label="Proposal title" placeholder="I want to order some food"></locals-input>
+      <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
+      <locals-input date label="Startdate" unixts="{{startdate}}"></locals-input>
+      <small>(Stakeholders can vote for a week)</small>
+      <div class="whitespace"></div>
+      <locals-input bind-value="{{author.name}}" label="Your name" placeholder="Johnny Smith"></locals-input>
+      <div class="whitespace"></div>
+      <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
+      <div class="whitespace"></div>
+ <!--     <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
       <locals-button green on-tap="adddeliverable">Add</locals-button>
-      <template is="dom-repeat" items="{{deliverables}}">
+       <template is="dom-repeat" items="{{deliverables}}">
         <div id="{{index}}">
           <p>{{item.description}}</p>
           <p>Δ<span>{{item.budget}}</span></p>
           <locals-button green on-tap="removedeliverable" key="{{index}}">{{index}}</locals-button>
         </div>
-      </template>
-      <p>Total budget: Δ<span>{{cost}}</span></p>
-      <locals-button green on-tap="saveProposal">Save</locals-button>
+      </template> 
+      <p>Total budget: Δ<span>{{cost}}</span></p> -->
+      <locals-button txtcolor="green" on-tap="prevProposal">Preview</locals-button>
+    </section>
+
+    <section>
+      <h1>{{subject}}</h1>
+      <p><span>{{description}}</span></p>
+      <p>Voting starts: <alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
+      <p><span>{{author.name}}</span></p>
+      <p><span>{{budget}}</span> Δ</p>
+      <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
+      <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
+    </section>
+
+    <section>
+      <div class="localstypo" id="log"></div>
+    </section>
+
+    </iron-pages>
+
+
     </template>
 
     <template is="dom-if" if="{{!edit}}">
@@ -222,6 +251,11 @@ Example:
         value: 0
       },
 
+      budget: {
+        type: Number,
+        value: 0
+      },
+
       /** IPFS object
       * @type {{ipfs: object}}
       */
@@ -234,6 +268,7 @@ Example:
     // Element Lifecycle
 
     ready: function() {
+      this.editselected = 0;
       this.pageselected = 0;
       // `ready` is called after all elements have been configured, but
       // propagates bottom-up. This element's children are ready, but parents
@@ -244,6 +279,7 @@ Example:
     },
 
     attached: function() {
+      this.editselected = 0;
       this.pageselected = 0;
       // `attached` fires once the element and its parents have been inserted
       // into a document.
@@ -296,6 +332,8 @@ Example:
      * saveProposal: this saves the proposal on IPFS, Firebase, and stores the IPFS hash on Ethereum.
      */
     saveProposal: function() {
+        this.editselected = 2;
+
         var self = this;
         var proposal = {};
         proposal.author = { name: this.author.name, address: this.author.address };
@@ -303,8 +341,9 @@ Example:
         proposal.description = this.description;
         proposal.deliverables = this.deliverables;
         proposal.startdate = this.startdate;
-        proposal.enddate = this.enddate;
-        proposal.cost = this.cost;
+        proposal.budget = this.budget;
+
+        this.transactionlog('savingtoipfs');
 
         // Add the proposal object to IPFS
         this.ipfs.add([new this.ipfs.Buffer(JSON.stringify(proposal))], function(err, res){
@@ -312,9 +351,12 @@ Example:
             console.log('ipfs result: ',res[0].Hash);
             self.ipfshash = res[0].Hash;
             proposal.ipfshash = res[0].Hash;
+            self.transactionlog('gotipfshash '+ self.ipfshash);
+            self.transactionlog('savingtofirebase');
             var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
             var postref = fb.push(proposal);
             proposal.fbpostref = postref.key();
+            self.transactionlog('savedtofirebase '+postref.key());
             self.fire('proposal-added');
             // deploy to ethereum
             
@@ -327,7 +369,7 @@ Example:
        
         // Save the IPFS hash to a smart contract
         // @Sponnet vul dat maar lekker in jonge
-        
+
 
     },
 
@@ -373,19 +415,12 @@ Example:
       this.cost = cost;
     },
 
-    faketransactionlog: function(){
+    transactionlog: function(arg){
       var self = this;
       var log = document.getElementById("log");
-      var ul = document.createElement("ul");
-      ul.id = "ul";
-
-      log.appendChild(ul);
-
-      window.setInterval(function(){
-        var item = document.createElement("li");
-        item.innerHTML = 'item';
-        ul.appendChild(item);
-      }, 3000);
+      var item = document.createElement("p");
+      item.innerHTML = arg;
+      log.appendChild(item);
     },
 
     voteyes: function(){
@@ -405,7 +440,15 @@ Example:
       this.pageselected = 0;
       var ul = document.getElementById("ul");
       ul.remove();
-    }
+    },
+
+    prevProposal: function(){
+      this.editselected = 1;
+    },
+
+    toProposal: function(){
+      this.editselected = 0;
+    },
 
   });
 

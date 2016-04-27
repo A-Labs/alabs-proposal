@@ -20,17 +20,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../../locals-style/locals-style.html">
 
     <style type="text/css">
+    .whitespace {
+      height: 20px;
+    }
+
+    .titel {
+      font-family: Opensanssemibold;
+      color: #999;
+      width: 100%;
+      border-top: 1px dashed #999;
+      border-bottom: 1px dashed #999;
+      box-sizing: border-box;
+      padding: 10px 10px 10px 0px;
+    }
 
     </style>
   </head>
   <body unresolved fullbleed>
   <div class="localscanvas localstypo">
-    <h1>Read / view</h1>
-    <alabs-proposal ipfshash="QmPVP93g5pN3uuaLziKV1Y7hxzdb3CPf38sF2JPbxrQcgk">
-    </alabs-proposal>
 
-    <h1>Edit / new</h1>
+    <div class="titel">
+    This is the view for creating a new or editing a proposal  
+    </div>
+      <div class="whitespace"></div>
     <alabs-proposal edit ipfshash="">
+    </alabs-proposal>  
+    <div class="whitespace"></div>
+    <div class="whitespace"></div>
+    <div class="titel">
+      This is the detail-view of a proposal  
+    </div>
+    <div class="whitespace"></div>
+    <alabs-proposal ipfshash="QmPVP93g5pN3uuaLziKV1Y7hxzdb3CPf38sF2JPbxrQcgk">
     </alabs-proposal>
 </div>
   </body>

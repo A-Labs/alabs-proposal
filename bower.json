@@ -24,7 +24,9 @@
     "locals-button": "https://github.com/locals-world/locals-elements-button.git",
     "ipfs-upload": "^0.0.10",
     "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12",
-    "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git"
+    "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git",
+    "locals-textarea": "https://github.com/locals-world/locals-elements-textarea.git",
+    "iron-pages": "^1.0.7"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
