@@ -389,21 +389,23 @@ Example:
                 nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
               };
 
-              var result = myContractInstance.newProposal.sendTransaction(proposal.author.account, proposal.budget, proposal.description, null, options,
-                function(err, result) {
-                  if (err != null) {
-                    console.log(err);
-                    console.log("ERROR: Transaction didn't go through. See console.");
-                  } else {
-                    console.log("Transaction Successful!");
-                    console.log('Tx hash=',result);
-                    // set vote status to TxHash received 
-                    //self.votestatus = 2;
-                    self.transactionHash = result;
-                    console.log('transactionHash: ', result);
-                  }
-                });
-              });
+              console.log("ETHEREUM TRANSACTION\n", proposal.author.account, proposal.budget, proposal.description);
+
+              // var result = myContractInstance.newProposal.sendTransaction(proposal.author.account, proposal.budget, proposal.description, null, options,
+              //   function(err, result) {
+              //     if (err != null) {
+              //       console.log(err);
+              //       console.log("ERROR: Transaction didn't go through. See console.");
+              //     } else {
+              //       console.log("Transaction Successful!");
+              //       console.log('Tx hash=',result);
+              //       // set vote status to TxHash received 
+              //       //self.votestatus = 2;
+              //       self.transactionHash = result;
+              //       console.log('transactionHash: ', result);
+              //     }
+              //   });
+              // });
             }
           });
     },
