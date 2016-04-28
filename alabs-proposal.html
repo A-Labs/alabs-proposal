@@ -340,36 +340,6 @@ Example:
     // Element Behavior
 
     /**
-     * The `alabs-proposal-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event alabs-proposal-lasers
-     * @detail {{sound: String}}
-     */
-
-     /**
-     * adddeliverable: this adds a new empty deliverable fieldset and adds to current values to the deliverables array. The total cost will be re-calculated.
-     */
-    adddeliverable: function() {
-      if(this.new_del_descr && this.new_del_budget){
-        this.push('deliverables', { description: this.new_del_descr, budget: Number(this.new_del_budget) });
-        this.new_del_descr = null;
-        this.new_del_budget = null;
-        this._calccost();
-      }
-    },
-
-    /**
-     * removedeliverable: this removes a deliverable from the deliverables array. The total cost will be re-calculated.
-     */
-    removedeliverable: function(e){
-      var index = this.deliverables.indexOf(Number(e.target.key));
-      this.deliverables.splice(index,1);
-      var elem = document.getElementById(e.target.key);
-      elem.remove();
-      this._calccost();
-    },
-
-    /**
      * saveProposal: this saves the proposal on IPFS, Firebase, and stores the IPFS hash on Ethereum.
      */
     saveProposal: function() {
@@ -513,8 +483,11 @@ Example:
     cancel: function(){
       window.clearInterval();
       this.pageselected = 0;
-      var ul = document.getElementById("ul");
-      ul.remove();
+      var log = document.getElementById("log");
+      //log.removeChildren();
+      while (log.hasChildNodes()) {
+        log.removeChild(log.lastChild);
+      };
     },
 
     prevProposal: function(){
