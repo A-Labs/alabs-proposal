@@ -368,6 +368,7 @@ Example:
           self.transactionlog('savedtofirebase '+postref.key());
           //self.fire('proposal-added');
           // deploy to ethereum
+          self.transactionlog('generating transaction');
 
           self.web3.eth.getGasPrice(function(err, result) {
 
@@ -376,9 +377,9 @@ Example:
 
             var gasPrice = result.toNumber(10);
 
-            var account = self.web3.toChecksumAddress(self.account);
+            self.transactionlog('gas price: ', gasPrice);
 
-            console.log('fixed account(?): ', account);
+            var account = self.web3.toChecksumAddress(self.account);
 
             var options = {
               from: self.account,
@@ -388,20 +389,20 @@ Example:
               nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
             };
 
-            console.log("ETHEREUM TRANSACTION\n", account, proposal.budget, proposal.description);
-
             var result = myContractInstance.newProposal.sendTransaction(account, proposal.budget, proposal.description, null, options,
               function(err, result) {
                 if (err != null) {
                   console.log(err);
                   console.log("ERROR: Transaction didn't go through. See console.");
+                  self.transactionlog('ERROR: Transaction didnt go through. See console.');
                 } else {
                   console.log("Transaction Successful!");
+                  self.transactionlog('Transaction success: ', result);
                   console.log('Tx hash=',result);
                   // set vote status to TxHash received 
                   //self.votestatus = 2;
                   self.transactionHash = result;
-                  console.log('transactionHash: ', result);
+                  self.transactionlog('Proposal has been added to the blockchain');
                 }
               });
             });
