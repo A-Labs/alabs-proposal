@@ -150,7 +150,7 @@ Example:
     <!-- What you see: a confirmation / preview before you vote. -->
     <section>
     <h1> You are about to vote <span>{{currentvote}}</span> on this proposal</h1>
-      <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
+      <locals-button txtcolor="red" on-tap="cancel">Cancel</locals-button>
       <locals-button txtcolor="green" on-tap="saveVote">Vote</locals-button>
     </section>
 
@@ -509,6 +509,7 @@ Example:
 
     saveVote: function(){
       this.pageselected = 2;
+      this.transactionlog('Casting vote');
       //this.faketransactionlog();
     },
 
