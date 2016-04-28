@@ -497,20 +497,17 @@ Example:
       console.log('yes vote');
       this.pageselected = 1;
       this.currentvote = "Yea";
-      //this.faketransactionlog();
     },
 
     voteno: function(){
       console.log('no vote');
       this.currentvote = "Nay";
       this.pageselected = 1;
-      //this.faketransactionlog();
     },
 
     saveVote: function(){
       this.pageselected = 2;
       this.transactionlog('Casting vote');
-      //this.faketransactionlog();
     },
 
     cancel: function(){
