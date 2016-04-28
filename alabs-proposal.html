@@ -73,6 +73,7 @@ Example:
 
     <iron-pages selected="{{editselected}}">
 
+   <!--  What you see when you add a new proposal -->
     <section>
       <h1>New proposal</h1>
       <p>Your account: <span>{{account}}</span></p>
@@ -86,19 +87,10 @@ Example:
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
       <div class="whitespace"></div>
- <!--     <locals-input bind-value="{{new_del_descr}}" value="{{new_del_descr}}" label="Description"></locals-input>
-      <locals-button green on-tap="adddeliverable">Add</locals-button>
-       <template is="dom-repeat" items="{{deliverables}}">
-        <div id="{{index}}">
-          <p>{{item.description}}</p>
-          <p>Δ<span>{{item.budget}}</span></p>
-          <locals-button green on-tap="removedeliverable" key="{{index}}">{{index}}</locals-button>
-        </div>
-      </template> 
-      <p>Total budget: Δ<span>{{cost}}</span></p> -->
       <locals-button txtcolor="green" on-tap="prevProposal">Preview</locals-button>
     </section>
 
+    <!-- What you see: preview before submitting proposal -->
     <section>
       <h1>{{subject}}</h1>
       <p><span>{{description}}</span></p>
@@ -109,6 +101,8 @@ Example:
       <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
     </section>
 
+
+    <!-- What you see: progress of proposal submission -->
     <section>
       <div class="localstypo" id="log"></div>
     </section>
@@ -122,8 +116,8 @@ Example:
 
       <iron-pages selected="{{pageselected}}">
 
+      <!-- What you see: non editable view of proposal, ready to vote on. -->
       <section>
-
       <h1>{{subject}}</h1>
       <p><span>{{author}}</span></p>
       <p><span>{{description}}</span></p>
@@ -137,12 +131,30 @@ Example:
           <p>Δ<span>{{item.budget}}</span></p>
         </div>
       </template>
-      <h2>Voting</h2>
-      <locals-button green on-tap="voteyes"><span>21</span>% Agree</locals-button>
-      <locals-button red on-tap="voteno"><span>79</span>% Disagree</locals-button>
 
+      <!-- If you haven't already voted, you'll see the voting buttons. -->
+      <template is="dom-if" if="{{!voted}}">
+        <h2>Voting</h2>
+        <locals-button green on-tap="voteyes"><span>21</span>% Agree</locals-button>
+        <locals-button red on-tap="voteno"><span>79</span>% Disagree</locals-button>
+      </template>
+
+      <!-- If you have already voted, you won't see the voting buttons. -->
+      <template is="dom-if" if="{{voted}}">
+        <h2>You voted</h2>
+        <locals-button><span>21</span>% Agree</locals-button>
+        <locals-button><span>79</span>% Disagree</locals-button>
+      </template>
     </section>
 
+    <!-- What you see: a confirmation / preview before you vote. -->
+    <section>
+    <h1> You are about to vote <span>{{currentvote}}</span> on this proposal</h1>
+      <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
+      <locals-button txtcolor="green" on-tap="saveVote">Vote</locals-button>
+    </section>
+
+    <!-- What you see: the progress of your vote submission -->
     <section>
       <h2>Vote progress:</h2>
       <locals-button red on-tap="cancel">Cancel</locals-button>
@@ -187,6 +199,15 @@ Example:
        * @type {{edit: boolean}}
        */
       edit: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Boolean, triggers already vote mode
+       * @type {{voted: boolean}}
+       */
+      voted: {
         type: Boolean,
         value: false
       },
@@ -245,11 +266,17 @@ Example:
         value: 0
       },
 
+      /** The budget you're asking for in the proposal
+      * @type {{budget: number}}
+      */
       budget: {
         type: Number,
         value: 0
       },
 
+      /** Web3 object, used to sign the tx.
+      * @type {{web3: object}}
+      */
       web3: {
         type: Object
       },
@@ -261,11 +288,17 @@ Example:
         type: Object
       },
 
+      /** The contract address where the proposals are stored.
+      * @type {{contractaddr: string}}
+      */
       contractaddr: {
         type: String,
         value: '0xffeC3944471F589ad5200e095B4B6032691f1797'
       },
 
+      /** The contract application blockchain interface.
+      * @type {{contractabi: object}}
+      */
       contractabi: {
         type: Object,
         value: [ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "proposals", "outputs": [ { "name": "recipient", "type": "address", "value": "0x9f376495fc3678a059db1e823af1e1c92ea8f385" }, { "name": "amount", "type": "uint256", "value": "1" }, { "name": "description", "type": "string", "value": "Schrijf een blogpost" }, { "name": "votingDeadline", "type": "uint256", "value": "1461667765" }, { "name": "executed", "type": "bool", "value": true }, { "name": "proposalPassed", "type": "bool", "value": true }, { "name": "numberOfVotes", "type": "uint256", "value": "1" }, { "name": "proposalHash", "type": "bytes32", "value": "0xbbb6a09ee5888a4878fc378b3bca63f4d92e595b3ef276d9d352719f2d5caa07" } ], "type": "function" }, { "constant": false, "inputs": [ { "name": "proposalNumber", "type": "uint256" }, { "name": "transactionBytecode", "type": "bytes" } ], "name": "executeProposal", "outputs": [ { "name": "result", "type": "int256" } ], "type": "function" }, { "constant": true, "inputs": [], "name": "sharesTokenAddress", "outputs": [ { "name": "", "type": "address", "value": "0x5bdb31fbbc4fed30db973d2d70537676c9d4dcb8" } ], "type": "function" }, { "constant": true, "inputs": [], "name": "numProposals", "outputs": [ { "name": "", "type": "uint256", "value": "6" } ], "type": "function" }, { "constant": false, "inputs": [ { "name": "sharesAddress", "type": "address" }, { "name": "minimumSharesToPassAVote", "type": "uint256" }, { "name": "minutesForDebate", "type": "uint256" } ], "name": "changeVotingRules", "outputs": [], "type": "function" }, { "constant": true, "inputs": [], "name": "debatingPeriodInMinutes", "outputs": [ { "name": "", "type": "uint256", "value": "10" } ], "type": "function" }, { "constant": true, "inputs": [], "name": "minimumQuorum", "outputs": [ { "name": "", "type": "uint256", "value": "1" } ], "type": "function" }, { "constant": true, "inputs": [], "name": "owner", "outputs": [ { "name": "", "type": "address", "value": "0x03f3be66f4dca6e7f5c15bd4950d78f66709ea44" } ], "type": "function" }, { "constant": false, "inputs": [ { "name": "beneficiary", "type": "address" }, { "name": "etherAmount", "type": "uint256" }, { "name": "JobDescription", "type": "string" }, { "name": "transactionBytecode", "type": "bytes" } ], "name": "newProposal", "outputs": [ { "name": "proposalID", "type": "uint256" } ], "type": "function" }, { "constant": false, "inputs": [ { "name": "proposalNumber", "type": "uint256" }, { "name": "supportsProposal", "type": "bool" } ], "name": "vote", "outputs": [ { "name": "voteID", "type": "uint256" } ], "type": "function" }, { "constant": true, "inputs": [ { "name": "proposalNumber", "type": "uint256" }, { "name": "beneficiary", "type": "address" }, { "name": "etherAmount", "type": "uint256" }, { "name": "transactionBytecode", "type": "bytes" } ], "name": "checkProposalCode", "outputs": [ { "name": "codeChecksOut", "type": "bool", "value": false } ], "type": "function" }, { "constant": false, "inputs": [ { "name": "newOwner", "type": "address" } ], "name": "transferOwnership", "outputs": [], "type": "function" }, { "inputs": [ { "name": "sharesAddress", "type": "address", "index": 0, "typeShort": "address", "bits": "", "displayName": "shares Address", "template": "elements_input_address", "value": "0x79FCA913Bb8c6Be97145aFd5A9B70300663AF1d7" }, { "name": "minimumSharesToPassAVote", "type": "uint256", "index": 1, "typeShort": "uint", "bits": "256", "displayName": "minimum Shares To Pass A Vote", "template": "elements_input_uint", "value": "" }, { "name": "minutesForDebate", "type": "uint256", "index": 2, "typeShort": "uint", "bits": "256", "displayName": "minutes For Debate", "template": "elements_input_uint", "value": "5" } ], "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "proposalID", "type": "uint256" }, { "indexed": false, "name": "recipient", "type": "address" }, { "indexed": false, "name": "amount", "type": "uint256" }, { "indexed": false, "name": "description", "type": "string" } ], "name": "ProposalAdded", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "proposalID", "type": "uint256" }, { "indexed": false, "name": "position", "type": "bool" }, { "indexed": false, "name": "voter", "type": "address" } ], "name": "Voted", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "proposalID", "type": "uint256" }, { "indexed": false, "name": "result", "type": "int256" }, { "indexed": false, "name": "quorum", "type": "uint256" }, { "indexed": false, "name": "active", "type": "bool" } ], "name": "ProposalTallied", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "minimumQuorum", "type": "uint256" }, { "indexed": false, "name": "debatingPeriodInMinutes", "type": "uint256" }, { "indexed": false, "name": "sharesTokenAddress", "type": "address" } ], "name": "ChangeOfRules", "type": "event" } ]
@@ -463,14 +496,21 @@ Example:
     voteyes: function(){
       console.log('yes vote');
       this.pageselected = 1;
-      this.faketransactionlog();
+      this.currentvote = "Yea";
+      //this.faketransactionlog();
     },
 
     voteno: function(){
       console.log('no vote');
+      this.currentvote = "Nay";
       this.pageselected = 1;
-      this.faketransactionlog();
+      //this.faketransactionlog();
     },
+
+    saveVote: function(){
+      this.pageselected = 2;
+      this.faketransactionlog();
+    }
 
     cancel: function(){
       window.clearInterval();
