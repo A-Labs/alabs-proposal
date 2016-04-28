@@ -431,7 +431,8 @@ Example:
             .on('end', () => {
               console.log(buf);
               var object = JSON.parse(buf);
-              self.author = { name: object.author.name, address: object.author.address };
+              self.author = object.author;
+              self.account = object.account;
               self.subject = object.subject;
               self.description = object.description;
               self.deliverables = object.deliverables;
