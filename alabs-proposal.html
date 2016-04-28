@@ -119,10 +119,9 @@ Example:
       <!-- What you see: non editable view of proposal, ready to vote on. -->
       <section>
       <h1>{{subject}}</h1>
-      <p><span>{{author}}</span></p>
+      <p><span>{{author}}</span> <small>{{account}}</small></p>
       <p><span>{{description}}</span></p>
       <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><alabs-datetime timestamp="{{enddate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{cost}}</span></p>
       <h2>Deliverables:</h2>
       <template is="dom-repeat" items="{{deliverables}}">
