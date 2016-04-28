@@ -78,7 +78,6 @@ Example:
       <h1>New proposal</h1>
       <p>Your account: <span>{{account}}</span></p>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
-      <locals-input bind-value="{{subject}}" label="Proposal title" placeholder="I want to order some food"></locals-input>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
       <locals-input date label="Startdate" unixts="{{startdate}}"></locals-input>
       <small>(Stakeholders can vote for a week)</small>
@@ -87,15 +86,17 @@ Example:
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
       <div class="whitespace"></div>
+      <locals-textarea bind-value="{{beneficiary}}" label="Beneficiary"></locals-textarea>
+      <div class="whitespace"></div>
       <locals-button txtcolor="green" on-tap="prevProposal">Preview</locals-button>
     </section>
 
     <!-- What you see: preview before submitting proposal -->
     <section>
-      <h1>{{subject}}</h1>
       <p><span>{{description}}</span></p>
       <p>Voting starts: <alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{author}}</span> <small>{{account}}</small></p>
+      <p><span>{{beneficiary}}</span></p>
       <p><span>{{budget}}</span> Δ</p>
       <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
       <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
@@ -118,18 +119,11 @@ Example:
 
       <!-- What you see: non editable view of proposal, ready to vote on. -->
       <section>
-      <h1>{{subject}}</h1>
       <p><span>{{author}}</span> <small>{{account}}</small></p>
       <p><span>{{description}}</span></p>
       <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>{{cost}}</span></p>
-      <h2>Deliverables:</h2>
-      <template is="dom-repeat" items="{{deliverables}}">
-        <div id="{{index}}">
-          <p>{{item.description}}</p>
-          <p>Δ<span>{{item.budget}}</span></p>
-        </div>
-      </template>
+      <p><span>{{budget}}</span></p>
+      <p><span>{{beneficiary}}</span></p>
 
       <!-- If you haven't already voted, you'll see the voting buttons. -->
       <template is="dom-if" if="{{!voted}}">
@@ -348,7 +342,7 @@ Example:
       var proposal = {};
       proposal.author = this.author;
       proposal.account = this.web3.toChecksumAddress(this.account);
-      proposal.subject = this.subject;
+      proposal.beneficiary = this.beneficiary;
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
       proposal.startdate = this.startdate;
@@ -381,17 +375,19 @@ Example:
 
             self.transactionlog('gas price: ', gasPrice);
 
+            var beneficiary = self.web3.toChecksumAddress(self.beneficiary);
+
             var account = self.web3.toChecksumAddress(self.account);
 
             var options = {
-              from: self.account,
+              from: account,
               //value: 1 * 1e18,
               gas: 100000,
               gasPrice: gasPrice,
               nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
             };
 
-            var result = myContractInstance.newProposal.sendTransaction(account, proposal.budget, proposal.description, null, options,
+            var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
               function(err, result) {
                 if (err != null) {
                   console.log(err);
