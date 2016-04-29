@@ -347,7 +347,8 @@ Example:
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
       proposal.startdate = this.startdate;
-      proposal.enddate = moment(this.startdate).add(7, 'days');
+      var m = moment(this.startdate);
+      proposal.enddate = m.add(7, 'days');
       proposal.budget = this.budget;
 
       this.transactionlog('savingtoipfs');
