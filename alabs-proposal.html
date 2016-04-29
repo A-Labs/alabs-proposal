@@ -19,6 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../firebase-element/firebase.html">
 <link rel="import" href="../alabs-datetime/alabs-datetime.html">
 <script src="../pikaday/pikaday.js"></script>
+<script src="../moment/min/moment-with-locales.min.js"></script>
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
@@ -346,6 +347,7 @@ Example:
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
       proposal.startdate = this.startdate;
+      proposal.enddate = moment(this.startdate).add(7, 'days');
       proposal.budget = this.budget;
 
       this.transactionlog('savingtoipfs');
