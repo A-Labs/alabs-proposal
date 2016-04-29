@@ -368,44 +368,44 @@ Example:
           // deploy to ethereum
           self.transactionlog('generating transaction');
 
-          self.web3.eth.getGasPrice(function(err, result) {
+          // self.web3.eth.getGasPrice(function(err, result) {
 
-            var MyContract = self.web3.eth.contract(self.contractabi);
-            var myContractInstance = MyContract.at(self.contractaddr);
+          //   var MyContract = self.web3.eth.contract(self.contractabi);
+          //   var myContractInstance = MyContract.at(self.contractaddr);
 
-            var gasPrice = result.toNumber(10);
+          //   var gasPrice = result.toNumber(10);
 
-            self.transactionlog('gas price: ', gasPrice);
+          //   self.transactionlog('gas price: ', gasPrice);
 
-            var beneficiary = self.web3.toChecksumAddress(self.beneficiary);
+          //   var beneficiary = self.web3.toChecksumAddress(self.beneficiary);
 
-            var account = self.web3.toChecksumAddress(self.account);
+          //   var account = self.web3.toChecksumAddress(self.account);
 
-            var options = {
-              from: account,
-              //value: 1 * 1e18,
-              gas: 100000,
-              gasPrice: gasPrice,
-              nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
-            };
+          //   var options = {
+          //     from: account,
+          //     //value: 1 * 1e18,
+          //     gas: 100000,
+          //     gasPrice: gasPrice,
+          //     nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          //   };
 
-            var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
-              function(err, result) {
-                if (err != null) {
-                  console.log(err);
-                  console.log("ERROR: Transaction didn't go through. See console.");
-                  self.transactionlog('ERROR: Transaction didnt go through. See console.');
-                } else {
-                  console.log("Transaction Successful!");
-                  self.transactionlog('Transaction success: ', result);
-                  console.log('Tx hash=',result);
-                  // set vote status to TxHash received 
-                  //self.votestatus = 2;
-                  self.transactionHash = result;
-                  self.transactionlog('Proposal has been added to the blockchain');
-                }
-              });
-            });
+          //   var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
+          //     function(err, result) {
+          //       if (err != null) {
+          //         console.log(err);
+          //         console.log("ERROR: Transaction didn't go through. See console.");
+          //         self.transactionlog('ERROR: Transaction didnt go through. See console.');
+          //       } else {
+          //         console.log("Transaction Successful!");
+          //         self.transactionlog('Transaction success: ', result);
+          //         console.log('Tx hash=',result);
+          //         // set vote status to TxHash received 
+          //         //self.votestatus = 2;
+          //         self.transactionHash = result;
+          //         self.transactionlog('Proposal has been added to the blockchain');
+          //       }
+          //     });
+          //   });
           };
       });
     },
