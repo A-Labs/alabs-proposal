@@ -9,10 +9,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-pages/iron-pages.html">
-
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/neon-animation.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../locals-button/locals-button.html">
 <link rel="import" href="../locals-item/locals-item.html">
 <link rel="import" href="../locals-style/locals-style.html">
+<link rel="import" href="../locals-confirm/locals-confirm.html">
 <link rel="import" href="../locals-input/locals-input.html">
 <link rel="import" href="../locals-textarea/locals-textarea.html">
 <link rel="import" href="../ipfs-upload/ipfs-upload.html">
@@ -41,14 +44,21 @@ Example:
       :host {
         display: block;
       }
-      .canvas {
-        @apply(--locals-canvas);
-      }
+
      .whitespace {
       height: 20px;
      }
       h1 {
-       @apply(--locals-font-h1);
+      @apply(--opensans-light);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+/*       @apply(--locals-font-h1);*/
       }
       h2 {
        @apply(--locals-font-h2);
@@ -67,16 +77,63 @@ Example:
        color: rgba(0,0,0,0.75);
       }
 
+      .from p {
+        font-size: 14px;
+
+        color: var(--locals-grey3);
+        @apply(--opensans-reg);
+      }
+
+      .confirmbtns {
+        width: 100%;
+        @apply(--layout-horizontal);
+      }
+
+      .confirmbtns locals-button {
+        margin: 10px 10px 10px 0px;
+      }
+
+      .votebtns {
+      }
+
+      .votebtns locals-button {
+        width: 250px;
+        margin: 5px 0px 5px 0px;
+      }
+
+      .accent {
+       @apply(--opensans-bold);
+       text-decoration: underline;
+      }
+
+      .accent2 {
+        @apply(--opensans-reg);
+       text-decoration: underline;
+      }
+
+
+      .voted {
+        max-width: 350px;
+        box-sizing: border-box;
+        padding: 25px;
+        background-color:var(--locals-grey1);
+      }
+
+
     </style>
 
     <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
 
     <template is="dom-if" if="{{edit}}">
 
-    <iron-pages selected="{{editselected}}">
+<!--     <iron-pages selected="{{editselected}}"> -->
+    <neon-animated-pages
+      selected="{{editselected}}"
+      entry-animation="{{entryAnimation}}"
+      exit-animation="{{exitAnimation}}">
 
    <!--  What you see when you add a new proposal -->
-    <section>
+    <neon-animatable>
       <h1>New proposal</h1>
       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
@@ -91,72 +148,88 @@ Example:
       <locals-textarea bind-value="{{beneficiary}}" label="Beneficiary"></locals-textarea>
       <div class="whitespace"></div>
       <locals-button txtcolor="green" on-tap="prevProposal">Preview</locals-button>
-    </section>
+    </neon-animatable>
 
     <!-- What you see: preview before submitting proposal -->
-    <section>
+    <neon-animatable>
       <p><span>{{description}}</span></p>
       <p>Voting starts: <alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{author}}</span> <small>{{account}}</small></p>
-      <p><span>{{beneficiary}}</span></p>
-      <p><span>{{budget}}</span> Δ</p>
+      <p><span>{{beneficiary}}</span><span>{{budget}}</span> Δ</p>
       <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
       <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
-    </section>
+    </neon-animatable>
 
 
     <!-- What you see: progress of proposal submission -->
-    <section>
+    <neon-animatable>
       <div class="localstypo" id="log"></div>
-    </section>
+    </neon-animatable>
 
-    </iron-pages>
+    </neon-animated-pages>
 
 
     </template>
 
     <template is="dom-if" if="{{!edit}}">
 
-      <iron-pages selected="{{pageselected}}">
+    <neon-animated-pages
+      selected="{{pageselected}}"
+      entry-animation="{{entryAnimation}}"
+      exit-animation="{{exitAnimation}}">
+
+
+
+
+
+
+
+
 
       <!-- What you see: non editable view of proposal, ready to vote on. -->
-      <section>
-      <p><span>{{author}}</span> <small>{{account}}</small></p>
-      <p><span>{{description}}</span></p>
-      <p>Einde vote: <alabs-datetime relative timestamp="{{enddate}}"></alabs-datetime></p>
-      <p><span>{{budget}}</span></p>
-      <p><span>{{beneficiary}}</span></p>
+      <neon-animatable>
+      <h1>{{description}}</h1>
+      <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
+      <p><span>{{author}}</span></p></div>
+      <div class="whitespace"></div>
+      <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
+      <div class="whitespace"></div>
 
       <!-- If you haven't already voted, you'll see the voting buttons. -->
       <template is="dom-if" if="{{!voted}}">
-        <h2>Voting</h2>
-        <locals-button green on-tap="voteyes"><span>21</span>% Agree</locals-button>
-        <locals-button red on-tap="voteno"><span>79</span>% Disagree</locals-button>
+      <div class="votebtns">
+      <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
+      <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
+      </div>
       </template>
 
       <!-- If you have already voted, you won't see the voting buttons. -->
       <template is="dom-if" if="{{voted}}">
-        <h2>You voted</h2>
-        <locals-button><span>21</span>% Agree</locals-button>
-        <locals-button><span>79</span>% Disagree</locals-button>
+        <div class="voted">    
+        <p>You voted already on this proposal.</p>
+        </div>
       </template>
-    </section>
+    </neon-animatable>
 
     <!-- What you see: a confirmation / preview before you vote. -->
-    <section>
-    <h1> You are about to vote <span>{{currentvote}}</span> on this proposal</h1>
-      <locals-button txtcolor="red" on-tap="cancel">Cancel</locals-button>
-      <locals-button txtcolor="green" on-tap="saveVote">Vote</locals-button>
-    </section>
+    <neon-animatable>
+    <locals-confirm on-cancel="cancel" on-confirm="saveVote">You are about to vote <span class="accent2">{{currentvote}}</span> this proposal.</locals-confirm>
+<!--       <div class="confirmbtns">
+        <locals-button txtcolor="red" icon="decline" on-tap=""></locals-button>
+        <locals-button txtcolor="green" icon="v" on-tap=""></locals-button>
+      </div> -->
+
+
+    </neon-animatable>
 
     <!-- What you see: the progress of your vote submission -->
-    <section>
+    <neon-animatable>
       <h2>Vote progress:</h2>
       <locals-button red on-tap="cancel">Cancel</locals-button>
       <div id="log"></div>
-    </section>
+    </neon-animatable>
 
-    </iron-pages>
+    </neon-animated-pages>
 
     </template>
 
@@ -198,6 +271,15 @@ Example:
         value: false
       },
 
+      entryAnimation: {
+        type: String,
+        value:"slide-from-right-animation"
+      },
+      
+      exitAnimation: {
+        type: String,
+        value:"slide-left-animation"
+      },
       /**
        * Boolean, triggers already vote mode
        * @type {{voted: boolean}}
@@ -290,6 +372,13 @@ Example:
       contractaddr: {
         type: String,
         value: '0xffeC3944471F589ad5200e095B4B6032691f1797'
+      },
+
+
+      editselected: {
+        // this is where our app gets it's data!
+        type: Number,
+        observer: '_editselected'
       },
 
       /** The contract application blockchain interface.
@@ -601,6 +690,8 @@ Example:
     ready: function() {
       this.editselected = 0;
       this.pageselected = 0;
+      this.entryAnimation = "fade-in-animation";
+      this.exitAnimation = "fade-out-animation";
       // `ready` is called after all elements have been configured, but
       // propagates bottom-up. This element's children are ready, but parents
       // are not.
@@ -776,14 +867,14 @@ Example:
     voteyes: function(){
       console.log('yes vote');
       this.pageselected = 1;
-      this.currentvote = "Yea";
       this.supportsProposal = true;
+      this.currentvote = "for";
     },
 
     voteno: function(){
       console.log('no vote');
-      this.currentvote = "Nay";
       this.supportsProposal = false;
+      this.currentvote = "against";
       this.pageselected = 1;
     },
 
@@ -856,6 +947,10 @@ Example:
 
     toProposal: function(){
       this.editselected = 0;
+    },
+
+    _editselected: function(){
+      // console.log("editselected is=", this.editselected);
     }
 
   });
