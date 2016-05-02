@@ -170,17 +170,9 @@ Example:
       selected="{{pageselected}}"
       entry-animation="{{entryAnimation}}"
       exit-animation="{{exitAnimation}}">
-
-
-
-
-
-
-
-
-
+      
       <!-- What you see: non editable view of proposal, ready to vote on. -->
-      <neon-animatable>
+      <section>
       <h1>{{data.description}}</h1>
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p>
@@ -200,10 +192,10 @@ Example:
         <p>You voted already on this proposal.</p>
         </div>
       </template>
-    </neon-animatable>
+    </section>
 
     <!-- What you see: a confirmation / preview before you vote. -->
-    <neon-animatable>
+    <section>
     <locals-confirm on-cancel="cancel" on-confirm="saveVote">You are about to vote <span class="accent2">{{currentvote}}</span> this proposal.</locals-confirm>
 <!--       <div class="confirmbtns">
         <locals-button txtcolor="red" icon="decline" on-tap=""></locals-button>
@@ -211,14 +203,14 @@ Example:
       </div> -->
 
 
-    </neon-animatable>
+    </section>
 
     <!-- What you see: the progress of your vote submission -->
-    <neon-animatable>
+    <section>
       <h2>Vote progress:</h2>
       <locals-button red on-tap="cancel">Cancel</locals-button>
       <div id="log"></div>
-    </neon-animatable>
+    </section>
 
     </neon-animated-pages>
 
@@ -901,7 +893,7 @@ Example:
     },
 
     _pageselected: function(){
-      // console.log("editselected is=", this.editselected);
+      console.log("pageselected is=", this.pageselected);
     },
 
   });
