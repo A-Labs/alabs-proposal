@@ -29,7 +29,8 @@
     "iron-pages": "^1.0.7",
     "locals-style": "https://github.com/locals-world/locals-style.git",
     "neon-animation": "^1.2.2",
-    "locals-confirm": "https://github.com/locals-world/locals-confirm.git"
+    "locals-confirm": "https://github.com/locals-world/locals-confirm.git",
+    "moment": "momentjs#~2.12.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

@@ -22,6 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../firebase-element/firebase.html">
 <link rel="import" href="../alabs-datetime/alabs-datetime.html">
 <script src="../pikaday/pikaday.js"></script>
+<script src="../moment/min/moment-with-locales.min.js"></script>
 
 <!--
 This renders a proposal, getting it's JSON data from IPFS / Firebase / Ethereum contract.
@@ -132,7 +133,7 @@ Example:
    <!--  What you see when you add a new proposal -->
     <neon-animatable>
       <h1>New proposal</h1>
-      <p>Your account: <span>{{account}}</span></p>
+      <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
       <locals-input date label="Startdate" unixts="{{startdate}}"></locals-input>
@@ -181,7 +182,7 @@ Example:
 <!--       <neon-animatable>
       <p><span>{{author}}</span> <small>{{account}}</small></p>
       <p><span>{{description}}</span></p>
-      <p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
+      <p>Einde vote: <alabs-datetime relative timestamp="{{enddate}}"></alabs-datetime></p>
       <p><span>{{budget}}</span></p>
       <p><span>{{beneficiary}}</span></p>
 
@@ -442,6 +443,18 @@ Example:
       // Use this to clean up anything you did in `attached`.
     },
 
+    // Add 0x to address 
+    fixaddress: function(address) {
+      function strStartsWith(str, prefix) {
+        return str.indexOf(prefix) === 0;
+      }
+
+      if (!strStartsWith(address, '0x')) {
+        return ('0x' + address);
+      }
+      return address;
+    },
+
     // Element Behavior
 
     /**
@@ -453,11 +466,12 @@ Example:
       var self = this;
       var proposal = {};
       proposal.author = this.author;
-      proposal.account = this.web3.toChecksumAddress(this.account);
+      proposal.account = this.fixaddress(this.account);
       proposal.beneficiary = this.beneficiary;
       proposal.description = this.description;
       proposal.deliverables = this.deliverables;
       proposal.startdate = this.startdate;
+      proposal.enddate = Number(this.startdate) + 7*24*60*60;
       proposal.budget = this.budget;
 
       this.transactionlog('savingtoipfs');
@@ -487,14 +501,14 @@ Example:
 
             self.transactionlog('gas price: ', gasPrice);
 
-            var beneficiary = self.web3.toChecksumAddress(self.beneficiary);
+            var beneficiary = self.fixaddress(self.beneficiary);
 
-            var account = self.web3.toChecksumAddress(self.account);
+            var account = self.fixaddress(self.account);
 
             var options = {
               from: account,
               //value: 1 * 1e18,
-              gas: 100000,
+              gas: 200000,
               gasPrice: gasPrice,
               nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
             };
