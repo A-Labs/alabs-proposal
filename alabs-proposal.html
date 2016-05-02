@@ -376,9 +376,13 @@ Example:
 
 
       editselected: {
-        // this is where our app gets it's data!
         type: Number,
         observer: '_editselected'
+      },
+
+      pageselected: {
+        type: Number,
+        observer: '_pageselected'
       },
 
       /** The contract application blockchain interface.
@@ -951,7 +955,11 @@ Example:
 
     _editselected: function(){
       // console.log("editselected is=", this.editselected);
-    }
+    },
+
+    _pageselected: function(){
+      // console.log("editselected is=", this.editselected);
+    },
 
   });
 
