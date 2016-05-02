@@ -96,7 +96,7 @@ Example:
       }
 
       .votebtns locals-button {
-        width: 280px;
+        width: 250px;
         margin: 5px 0px 5px 0px;
       }
 
@@ -112,6 +112,7 @@ Example:
 
 
       .voted {
+        max-width: 350px;
         box-sizing: border-box;
         padding: 25px;
         background-color:var(--locals-grey1);
@@ -179,27 +180,6 @@ Example:
 
 
 
-<!--       <neon-animatable>
-      <p><span>{{author}}</span> <small>{{account}}</small></p>
-      <p><span>{{description}}</span></p>
-      <p>Einde vote: <alabs-datetime relative timestamp="{{enddate}}"></alabs-datetime></p>
-      <p><span>{{budget}}</span></p>
-      <p><span>{{beneficiary}}</span></p>
-
-      <template is="dom-if" if="{{!voted}}">
-      </template>
-      <template is="dom-if" if="{{voted}}">
-        <h2>You voted</h2>
-        <locals-button><span>21</span>% Agree</locals-button>
-        <locals-button><span>79</span>% Disagree</locals-button>
-      </template>
-    </neon-animatable>
- -->
-
-
-
-
-
 
 
 
@@ -207,28 +187,27 @@ Example:
 
       <!-- What you see: non editable view of proposal, ready to vote on. -->
       <neon-animatable>
-      <h1>Do you wanna give 4 LC for pizza's?</h1>
+      <h1>{{description}}</h1>
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>Bennisan</span></p></div>
+      <p><span>{{author}}</span></p></div>
       <div class="whitespace"></div>
-      <p><span>44</span> Δ for <span>Benificiary</span></p>
+      <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
       <div class="whitespace"></div>
 
       <!-- If you haven't already voted, you'll see the voting buttons. -->
       <template is="dom-if" if="{{!voted}}">
       <div class="votebtns">
-      <locals-button txtcolor="darkblue" on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
-      <locals-button txtcolor="blue" on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
+      <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
+      <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
       </div>
       </template>
 
       <!-- If you have already voted, you won't see the voting buttons. -->
-<!--       <template is="dom-if" if="{{voted}}">
- -->    
-<!--         <div class="voted">    
-        <p class="bold">You voted on this </p>
-        </div> -->
-<!--       </template> -->
+      <template is="dom-if" if="{{voted}}">
+        <div class="voted">    
+        <p>You voted already on this proposal.</p>
+        </div>
+      </template>
     </neon-animatable>
 
     <!-- What you see: a confirmation / preview before you vote. -->
