@@ -273,7 +273,8 @@ Example:
       * @type {{web3: object}}
       */
       web3: {
-        type: Object
+        type: Object,
+        observer: '_web3observer'
       },
 
       /** IPFS object
@@ -619,6 +620,10 @@ Example:
       // loading resources, etc).
     },
 
+    _web3observer: function() {
+      console.log('alabs-propsal : loaded web3');
+    },
+
     detached: function() {
       // The analog to `attached`, `detached` fires when the element has been
       // removed from a document.
@@ -811,11 +816,27 @@ Example:
             } else {
               self.transactionlog('Transaction success: ', result);
               console.log('Tx hash=', result);
+              self.watchtransaction(result,function (err,res){
+                console.log('TX',result,'viewed on BC');
+              })
               self.transactionlog('Your vote has been added to the blockchain');
             }
           });
       });
 
+
+    },
+
+    watchtransaction: function(txhash,cb){
+
+       var myfilter = document.createElement('locals-contractlistener');
+        myfilter.web3 = this.web3;
+        myfilter.filter = { topics : [txhash] };
+        myfilter.addEventListener('filter-match',function(err,res){
+//          myfilter.
+          console.log('watchtransaction matched something..',err,res);
+          cb(err,res);
+        });       
 
     },
 
