@@ -122,8 +122,6 @@ Example:
 
     </style>
 
-    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ipfs="{{ipfs}}" hash="{{ipfshash}}"></ipfs-upload>
-
     <template is="dom-if" if="{{edit}}">
 
 <!--     <iron-pages selected="{{editselected}}"> -->
@@ -138,10 +136,6 @@ Example:
       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
       <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
-      <locals-input date label="Startdate" unixts="{{startdate}}"></locals-input>
-      <small>(Stakeholders can vote for a week)</small>
-      <div class="whitespace"></div>
-      <locals-input bind-value="{{author}}" label="Your name" placeholder="Johnny Smith"></locals-input>
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
       <div class="whitespace"></div>
@@ -153,9 +147,8 @@ Example:
     <!-- What you see: preview before submitting proposal -->
     <neon-animatable>
       <p><span>{{description}}</span></p>
-      <p>Voting starts: <alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>{{author}}</span> <small>{{account}}</small></p>
-      <p><span>{{beneficiary}}</span><span>{{budget}}</span> Δ</p>
+      <p><span>{{beneficiary}}</span></p>
+      <p><span>{{budget}}</span> Δ</p>
       <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
       <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
     </neon-animatable>
@@ -188,11 +181,9 @@ Example:
 
       <!-- What you see: non editable view of proposal, ready to vote on. -->
       <neon-animatable>
-      <h1>{{description}}</h1>
+      <h1>{{data.description}}</h1>
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>{{author}}</span></p></div>
-      <div class="whitespace"></div>
-      <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
+      <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p>
       <div class="whitespace"></div>
 
       <!-- If you haven't already voted, you'll see the voting buttons. -->
@@ -249,9 +240,9 @@ Example:
        * The IPFS hash, which can be resolved to a json object.
        * @type {{ipfshash: string}}
        */
-      ipfshash: {
-        type: String,
-        observer: '_ipfshash'
+      data: {
+        type: Object,
+        observer: '_data'
       },
 
       /**
@@ -743,105 +734,57 @@ Example:
       this.editselected = 2;
 
       var self = this;
+
       var proposal = {};
-      proposal.author = this.author;
       proposal.account = this.fixaddress(this.account);
       proposal.beneficiary = this.beneficiary;
       proposal.description = this.description;
-      proposal.deliverables = this.deliverables;
-      proposal.startdate = this.startdate;
-      proposal.enddate = Number(this.startdate) + 7*24*60*60;
       proposal.budget = this.budget;
 
       this.transactionlog('savingtoipfs');
 
-      // Add the proposal object to IPFS
-      this.ipfs.add([new this.ipfs.Buffer(JSON.stringify(proposal))], function(err, res){
-        if(!err){
-          console.log('ipfs result: ',res[0].Hash);
-          self.ipfshash = res[0].Hash;
-          proposal.ipfshash = res[0].Hash;
-          self.transactionlog('gotipfshash '+ self.ipfshash);
-          self.transactionlog('savingtofirebase');
-          var fb = new Firebase('https://sponnet.firebaseio.com/alabs/proposals');
-          var postref = fb.push(proposal);
-          proposal.fbpostref = postref.key();
-          self.transactionlog('savedtofirebase '+postref.key());
-          //self.fire('proposal-added');
-          // deploy to ethereum
-          self.transactionlog('generating transaction');
+      self.web3.eth.getGasPrice(function(err, result) {
 
-          self.web3.eth.getGasPrice(function(err, result) {
+        var MyContract = self.web3.eth.contract(self.contractabi);
+        var myContractInstance = MyContract.at(self.contractaddr);
 
-            var MyContract = self.web3.eth.contract(self.contractabi);
-            var myContractInstance = MyContract.at(self.contractaddr);
+        var gasPrice = result.toNumber(10);
 
-            var gasPrice = result.toNumber(10);
+        self.transactionlog('gas price: ', gasPrice);
 
-            self.transactionlog('gas price: ', gasPrice);
+        var beneficiary = self.fixaddress(self.beneficiary);
 
-            var beneficiary = self.fixaddress(self.beneficiary);
+        var account = self.fixaddress(self.account);
 
-            var account = self.fixaddress(self.account);
+        var options = {
+          from: account,
+          //value: 1 * 1e18,
+          gas: 200000,
+          gasPrice: gasPrice,
+          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+        };
 
-            var options = {
-              from: account,
-              //value: 1 * 1e18,
-              gas: 200000,
-              gasPrice: gasPrice,
-              nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
-            };
-
-            var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
-              function(err, result) {
-                if (err != null) {
-                  console.log(err);
-                  console.log("ERROR: Transaction didn't go through. See console.");
-                  self.transactionlog('ERROR: Transaction didnt go through. See console.');
-                } else {
-                  console.log("Transaction Successful!");
-                  self.transactionlog('Transaction success: ', result);
-                  console.log('Tx hash=',result);
-                  // set vote status to TxHash received 
-                  //self.votestatus = 2;
-                  self.transactionHash = result;
-                  self.transactionlog('Proposal has been added to the blockchain');
-                }
-              });
-            });
-          };
-      });
+        var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
+          function(err, result) {
+            if (err != null) {
+              console.log(err);
+              console.log("ERROR: Transaction didn't go through. See console.");
+              self.transactionlog('ERROR: Transaction didnt go through. See console.');
+            } else {
+              console.log("Transaction Successful!");
+              self.transactionlog('Transaction success: ', result);
+              console.log('Tx hash=',result);
+              // set vote status to TxHash received 
+              //self.votestatus = 2;
+              self.transactionHash = result;
+              self.transactionlog('Proposal has been added to the blockchain');
+            }
+          });
+        });
     },
 
-    /**
-     * _ipfshash: this gets the ipfs hash, resolves it and gets us values.
-     */
-    _ipfshash: function(){
-      if(!this.edit && this.ipfs){
-        var self = this;
-        this.ipfs.cat(this.ipfshash).then(function(res){
-          var buf = '';
-            res
-            .on('error', (err) => {
-              expect(err).to.not.exist
-            })
-            .on('data', (data) => {
-              buf += data
-            })
-            .on('end', () => {
-              console.log(buf);
-              var object = JSON.parse(buf);
-              self.author = object.author;
-              self.account = object.account;
-              self.subject = object.subject;
-              self.description = object.description;
-              self.deliverables = object.deliverables;
-              self.startdate = object.startdate;
-              self.enddate = object.enddate;
-              self.cost = object.cost;
-            });
-        });
-      }
+    _data: function(){
+      console.log(this.data);
     },
 
     /**
