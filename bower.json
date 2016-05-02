@@ -27,7 +27,8 @@
     "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git",
     "locals-textarea": "https://github.com/locals-world/locals-elements-textarea.git",
     "iron-pages": "^1.0.7",
-    "moment": "momentjs#~2.12.0"
+    "moment": "momentjs#~2.12.0",
+    "locals-contractlistener": "^0.0.2"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
