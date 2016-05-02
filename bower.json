@@ -19,14 +19,17 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
-    "locals-item": "https://github.com/locals-world/locals-elements-item.git",
-    "locals-input": "https://github.com/locals-world/locals-elements-input.git",
-    "locals-button": "https://github.com/locals-world/locals-elements-button.git",
+    "locals-item": "https://github.com/locals-world/locals-item.git",
+    "locals-input": "https://github.com/locals-world/locals-input.git",
+    "locals-button": "https://github.com/locals-world/locals-button.git",
     "ipfs-upload": "^0.0.10",
     "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12",
     "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git",
-    "locals-textarea": "https://github.com/locals-world/locals-elements-textarea.git",
-    "iron-pages": "^1.0.7"
+    "locals-textarea": "https://github.com/locals-world/locals-textarea.git",
+    "iron-pages": "^1.0.7",
+    "locals-style": "https://github.com/locals-world/locals-style.git",
+    "neon-animation": "^1.2.2",
+    "locals-confirm": "https://github.com/locals-world/locals-confirm.git"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
