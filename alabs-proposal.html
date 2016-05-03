@@ -133,8 +133,8 @@ Example:
    <!--  What you see when you add a new proposal -->
     <neon-animatable>
       <h1>New proposal</h1>
-      <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
-      <p>The current cost for a new proposal is <span>2</span> Δ.</p>
+<!--       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
+ -->      <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
@@ -758,7 +758,7 @@ Example:
           //value: 1 * 1e18,
           gas: 200000,
           gasPrice: gasPrice,
-          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          nonce: new Date().getTime(),
         };
 
         var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
@@ -781,7 +781,10 @@ Example:
     },
 
     _data: function(){
-      console.log(this.data);
+      //console.log(this.data);
+      var MyContract = self.web3.eth.contract(self.contractabi);
+      var myContractInstance = MyContract.at(self.contractaddr);
+      //var voted = myContractInstance().toNumber();
     },
 
     /**
