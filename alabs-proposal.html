@@ -78,10 +78,10 @@ Example:
       }
 
       .from p {
-        font-size: 14px;
+        font-size: 16px;
 
-        color: var(--locals-grey3);
-        @apply(--opensans-reg);
+        color: var(--locals-grey4);
+        @apply(--opensans-semibold);
       }
 
       .confirmbtns {
@@ -120,8 +120,9 @@ Example:
       }
 
       .line {
+        margin: 35px 0px 35px 0px;
         height: 2px;
-        border-bottom: 1px dashed var(--locals-grey2);
+        border-bottom: 2px dashed var(--locals-grey3);
       }
 
 
@@ -153,9 +154,11 @@ Example:
     <neon-animatable>
 
       <h1>{{description}}</h1>
+      <div class="from">
       <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
+      </div>
       <div class="line"></div>
-    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal">You are posting this proposal.</locals-confirm>
+    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal" small>You are posting this proposal.</locals-confirm>
     </neon-animatable>
 
 
