@@ -119,6 +119,11 @@ Example:
         background-color:var(--locals-grey1);
       }
 
+      .line {
+        height: 2px;
+        border-bottom: 1px dashed var(--locals-grey2);
+      }
+
 
     </style>
 
@@ -146,11 +151,11 @@ Example:
 
     <!-- What you see: preview before submitting proposal -->
     <neon-animatable>
-      <p><span>{{description}}</span></p>
-      <p><span>{{beneficiary}}</span></p>
-      <p><span>{{budget}}</span> Δ</p>
-      <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
-      <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
+
+      <h1>{{description}}</h1>
+      <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
+      <div class="line"></div>
+    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal">You are posting this proposal.</locals-confirm>
     </neon-animatable>
 
 
