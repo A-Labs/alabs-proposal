@@ -836,10 +836,10 @@ Example:
           nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
         };
 
-        this.transactionlog('Casting vote');
-        this.pageselected = 2;
+        self.transactionlog('Casting vote');
+        self.pageselected = 2;
 
-        var result = myContractInstance.vote.sendTransaction(self.proposalNumber, self.supportsProposal, "tralala", options,
+        var result = myContractInstance.vote.sendTransaction(self.data.index, self.supportsProposal, "tralala", options,
           function(err, result) {
             if (err != null) {
               console.log(err);
