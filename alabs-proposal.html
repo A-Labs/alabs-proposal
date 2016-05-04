@@ -188,20 +188,39 @@ Example:
       <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p></div>
       <div class="whitespace"></div>
 
-      <!-- If you haven't already voted, you'll see the voting buttons. -->
-      <template is="dom-if" if="{{!voted}}">
-      <div class="votebtns">
-      <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
-      <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
-      </div>
+      <!-- If the voting has ended we don't need to show these buttons -->
+      <template is="dom-if" if="{{data.votingactive}}">
+
+        <!-- If you haven't already voted, you'll see the voting buttons. -->
+        <div class="votebtns">
+        <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
+        <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
+        </div>
+
       </template>
 
-      <!-- If you have already voted, you won't see the voting buttons. -->
-      <template is="dom-if" if="{{voted}}">
-        <div class="voted">    
-        <p>You voted already on this proposal.</p>
-        </div>
+      <!-- If the voting has ended we don't need to show these buttons -->
+      <template is="dom-if" if="{{!data.votingactive}}">
+
+        <!-- if the proposal has ended, but hasn't been executed, show an execute button
+         -->
+
+        <template is="dom-if" if="{{!data.executed}}">
+          <locals-button on-tap="execute"><span class="accent">Execute</span> this proposal</locals-button>
+        </template>
+
+        <template is="dom-if" if="{{data.executed}}">
+          <p>Proposal has been executed.</p>
+          <template is="dom-if" if="{{!data.passed}}">
+            <p>Proposal has not been passed.</p>
+          </template>
+          <template is="dom-if" if="{{data.passed}}">
+            <p>Proposal has been passed.</p>
+          </template>
+        </template>
+
       </template>
+
     </section>
 
     <!-- What you see: a confirmation / preview before you vote. -->
@@ -880,7 +899,45 @@ Example:
             self.transactionlog('Your vote has been added to the blockchain');
           });
       });
+    },
 
+    execute: function(){
+      var self = this;
+      self.web3.eth.getGasPrice(function(err, result) {
+
+        var MyContract = self.web3.eth.contract(self.contractabi);
+        var myContractInstance = MyContract.at(self.contractaddr);
+
+        var gasPrice = result.toNumber(10);
+        self.transactionlog('gas price: ', gasPrice);
+
+        var options = {
+          from: self.fixaddress(self.account),
+          //value: 1 * 1e18,
+          gas: 200000,
+          gasPrice: gasPrice,
+          nonce: new Date().getTime(),
+        };
+
+
+        self.transactionlog('Executing proposal for '+JSON.stringify(options));
+        self.pageselected = 2;
+
+        var result = myContractInstance.executeProposal.sendTransaction(self.data.index, null, options,
+          function(err, result) {
+            if (err != null) {
+              console.log(err);
+              self.transactionlog('ERROR: Transaction didnt go through. See console.');
+            } else {
+              self.transactionlog('Transaction success: ', result);
+              console.log('Tx hash=', result);
+              self.watchtransaction(result,function (err,res){
+                console.log('TX',result,'viewed on BC');
+              })
+              self.transactionlog('The proposal has been executed');
+            }
+          });
+      });
     },
 
     watchtransaction: function(txhash,cb){
