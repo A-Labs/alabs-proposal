@@ -78,10 +78,10 @@ Example:
       }
 
       .from p {
-        font-size: 14px;
+        font-size: 16px;
 
-        color: var(--locals-grey3);
-        @apply(--opensans-reg);
+        color: var(--locals-grey4);
+        @apply(--opensans-semibold);
       }
 
       .confirmbtns {
@@ -119,6 +119,12 @@ Example:
         background-color:var(--locals-grey1);
       }
 
+      .line {
+        margin: 35px 0px 35px 0px;
+        height: 2px;
+        border-bottom: 2px dashed var(--locals-grey3);
+      }
+
 
     </style>
 
@@ -133,8 +139,8 @@ Example:
    <!--  What you see when you add a new proposal -->
     <neon-animatable>
       <h1>New proposal</h1>
-      <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
-      <p>The current cost for a new proposal is <span>2</span> Δ.</p>
+<!--       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
+ -->      <p>The current cost for a new proposal is <span>2</span> Δ.</p>
       <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
       <div class="whitespace"></div>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
@@ -146,11 +152,13 @@ Example:
 
     <!-- What you see: preview before submitting proposal -->
     <neon-animatable>
-      <p><span>{{description}}</span></p>
-      <p><span>{{beneficiary}}</span></p>
-      <p><span>{{budget}}</span> Δ</p>
-      <locals-button txtcolor="red" on-tap="toProposal">Cancel</locals-button>
-      <locals-button txtcolor="green" on-tap="saveProposal">Save</locals-button>
+
+      <h1>{{description}}</h1>
+      <div class="from">
+      <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
+      </div>
+      <div class="line"></div>
+    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal" small>You are posting this proposal.</locals-confirm>
     </neon-animatable>
 
 
@@ -176,7 +184,7 @@ Example:
       <h1>{{data.description}}</h1>
       <p>{{data.votingdeadline}}</p>
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
-      <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p>
+      <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p></div>
       <div class="whitespace"></div>
 
       <!-- If you haven't already voted, you'll see the voting buttons. -->
@@ -788,7 +796,10 @@ Example:
     },
 
     _data: function(){
-      console.log(this.data);
+      //console.log(this.data);
+      //var MyContract = self.web3.eth.contract(self.contractabi);
+      //var myContractInstance = MyContract.at(self.contractaddr);
+      //var voted = myContractInstance().toNumber();
     },
 
     /**
@@ -847,7 +858,7 @@ Example:
           //value: 1 * 1e18,
           gas: 200000,
           gasPrice: gasPrice,
-          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          nonce: new Date().getTime(),
         };
 
         self.transactionlog('Casting vote');
