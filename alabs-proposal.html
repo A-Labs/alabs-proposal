@@ -198,6 +198,8 @@ Example:
     <!-- What you see: a confirmation / preview before you vote. -->
     <section>
     <locals-confirm on-cancel="cancel" on-confirm="saveVote">You are about to vote <span class="accent2">{{currentvote}}</span> this proposal.</locals-confirm>
+
+    <locals-c
 <!--       <div class="confirmbtns">
         <locals-button txtcolor="red" icon="decline" on-tap=""></locals-button>
         <locals-button txtcolor="green" icon="v" on-tap=""></locals-button>
@@ -209,6 +211,7 @@ Example:
     <!-- What you see: the progress of your vote submission -->
     <section>
       <h2>Vote progress:</h2>
+      <locals-contractlistener txhash={{txhash}}></locals-contractlistener>
       <locals-button red on-tap="cancel">Cancel</locals-button>
       <div id="log"></div>
     </section>
@@ -226,6 +229,11 @@ Example:
   Polymer({
 
     is: 'alabs-proposal',
+
+    listeners: {
+        'votetxreceived': '_votetxreceived',
+        'votetxreceived': '_votetxmined'
+    },
 
     properties: {
 
@@ -755,10 +763,8 @@ Example:
 
         var options = {
           from: account,
-          //value: 1 * 1e18,
           gas: 200000,
-          gasPrice: gasPrice,
-          nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          gasPrice: gasPrice
         };
 
         var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
@@ -771,6 +777,7 @@ Example:
               console.log("Transaction Successful!");
               self.transactionlog('Transaction success: ', result);
               console.log('Tx hash=',result);
+
               // set vote status to TxHash received 
               //self.votestatus = 2;
               self.transactionHash = result;
@@ -818,7 +825,14 @@ Example:
       this.pageselected = 1;
     },
 
+    // event handler
+    _votetxreceived: function(){
+      console.log('TX received');
+    }
+
     saveVote: function() {
+
+
       var self = this;
       self.web3.eth.getGasPrice(function(err, result) {
 
@@ -845,10 +859,15 @@ Example:
               console.log(err);
               self.transactionlog('ERROR: Transaction didnt go through. See console.');
             } else {
-              self.transactionlog('Transaction success: ', result);
-              console.log('Tx hash=', result);
-              self.watchtransaction(result,function (err,res){
-                console.log('TX',result,'viewed on BC');
+              self.transactionlog('Transaction success: ', txhash);
+              console.log('Tx hash=', txhash);
+              // this triggers the locals-contractlistener component
+              self.txhash = txhash;
+              self.watchtransaction(txhash,function (err,res){
+                console.log('TX',txhash,'viewed on BC');
+                if (res.result = 'ok'){
+                  self.state = 2;
+                }
               })
               self.transactionlog('Your vote has been added to the blockchain');
             }
