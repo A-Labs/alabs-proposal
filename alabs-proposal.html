@@ -214,7 +214,7 @@ Example:
     <!-- What you see: the progress of your vote submission -->
     <section>
       <h2>Vote progress:</h2>
-      <locals-contractlistener txhash={{txhash}}></locals-contractlistener>
+      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}"></locals-contractlistener>
       <locals-button red on-tap="cancel">Cancel</locals-button>
       <div id="log"></div>
     </section>
@@ -284,6 +284,11 @@ Example:
         value: false
       },
 
+      txhash: {
+        type:String,
+        notify: true
+      },
+
       /**
        * The author of the vote, an object with human readable name and eth address. 
        *
@@ -351,6 +356,7 @@ Example:
       */
       web3: {
         type: Object,
+        notify: true,
         observer: '_web3observer'
       },
 
@@ -814,7 +820,7 @@ Example:
       var log = document.getElementById("log");
       var item = document.createElement("p");
       item.innerHTML = arg;
-      log.appendChild(item);
+      //log.appendChild(item);
     },
 
     voteyes: function(){
@@ -869,17 +875,11 @@ Example:
               console.log('Tx hash=', txhash);
               // this triggers the locals-contractlistener component
               self.txhash = txhash;
-              self.watchtransaction(txhash,function (err,res){
-                console.log('TX',txhash,'viewed on BC');
-                if (res.result = 'ok'){
-                  self.state = 2;
-                }
-              })
-              self.transactionlog('Your vote has been added to the blockchain');
             }
+
+            self.transactionlog('Your vote has been added to the blockchain');
           });
       });
-
 
     },
 

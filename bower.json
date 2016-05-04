@@ -27,7 +27,6 @@
     "alabs-datetime": "https://github.com/A-Labs/alabs-datetime.git",
     "locals-textarea": "https://github.com/locals-world/locals-textarea.git",
     "iron-pages": "^1.0.7",
-    "locals-contractlistener": "^0.0.2",
     "locals-style": "https://github.com/locals-world/locals-style.git",
     "neon-animation": "^1.2.2",
     "locals-confirm": "https://github.com/locals-world/locals-confirm.git",
