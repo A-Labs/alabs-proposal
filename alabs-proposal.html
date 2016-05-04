@@ -166,6 +166,7 @@ Example:
     <!-- What you see: progress of proposal submission -->
     <neon-animatable>
       <div class="localstypo" id="log"></div>
+      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}"></locals-contractlistener>
     </neon-animatable>
 
     </neon-animated-pages>
@@ -796,20 +797,21 @@ Example:
         };
 
         var result = myContractInstance.newProposal.sendTransaction(beneficiary, proposal.budget, proposal.description, null, options,
-          function(err, result) {
+          function(err, txhash) {
             if (err != null) {
               console.log(err);
               console.log("ERROR: Transaction didn't go through. See console.");
               self.transactionlog('ERROR: Transaction didnt go through. See console.');
             } else {
               console.log("Transaction Successful!");
-              self.transactionlog('Transaction success: ', result);
-              console.log('Tx hash=',result);
+              self.transactionlog('Transaction success: ', txhash);
+              console.log('Tx hash=',txhash);
+               self.txhash = txhash;
 
               // set vote status to TxHash received 
               //self.votestatus = 2;
-              self.transactionHash = result;
-              self.transactionlog('Proposal has been added to the blockchain');
+              //self.transactionHash = txhash;
+              //self.transactionlog('Proposal has been added to the blockchain');
             }
           });
         });
