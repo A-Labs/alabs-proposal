@@ -183,7 +183,7 @@ Example:
       <!-- What you see: non editable view of proposal, ready to vote on. -->
       <section>
       <h1>{{data.description}}</h1>
-      <p>{{data.votingdeadline}}</p>
+      <!-- <p>{{data.votingdeadline}}</p> -->
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
       <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p></div>
       <div class="whitespace"></div>
@@ -210,12 +210,12 @@ Example:
         </template>
 
         <template is="dom-if" if="{{data.executed}}">
-          <p>Proposal has been executed.</p>
+          <p>This Proposal has been executed.</p>
           <template is="dom-if" if="{{!data.passed}}">
-            <p>Proposal has not been passed.</p>
+            <p>It has not been passed.</p>
           </template>
           <template is="dom-if" if="{{data.passed}}">
-            <p>Proposal has been passed.</p>
+            <p>It has been passed.</p>
           </template>
         </template>
 
@@ -232,7 +232,7 @@ Example:
 
     <!-- What you see: the progress of your vote submission -->
     <section>
-      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}">Your vote is being submitted</locals-contractlistener>
+      <locals-contractlistener web3="{{web3}}" txhash="{{txhash}}">The proposal is being executed</locals-contractlistener>
     </section>
 
     </neon-animated-pages>
