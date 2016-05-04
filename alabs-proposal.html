@@ -158,7 +158,8 @@ Example:
       <p><span>{{budget}}</span> Δ for <span>{{beneficiary}}</span></p>
       </div>
       <div class="line"></div>
-    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal" small>You are posting this proposal.</locals-confirm>
+    <locals-confirm on-cancel="toProposal" on-confirm="saveProposal" small>You are posting this proposal.
+    </locals-confirm>
     </neon-animatable>
 
 
@@ -206,12 +207,6 @@ Example:
     <!-- What you see: a confirmation / preview before you vote. -->
     <section>
     <locals-confirm on-cancel="cancel" on-confirm="saveVote">You are about to vote <span class="accent2">{{currentvote}}</span> this proposal.</locals-confirm>
-
-    <locals-c
-<!--       <div class="confirmbtns">
-        <locals-button txtcolor="red" icon="decline" on-tap=""></locals-button>
-        <locals-button txtcolor="green" icon="v" on-tap=""></locals-button>
-      </div> -->
 
 
     </section>
@@ -839,7 +834,7 @@ Example:
     // event handler
     _votetxreceived: function(){
       console.log('TX received');
-    }
+    },
 
     saveVote: function() {
 
@@ -865,7 +860,7 @@ Example:
         self.pageselected = 2;
 
         var result = myContractInstance.vote.sendTransaction(self.data.index, self.supportsProposal, "tralala", options,
-          function(err, result) {
+          function(err, txhash) {
             if (err != null) {
               console.log(err);
               self.transactionlog('ERROR: Transaction didnt go through. See console.');
