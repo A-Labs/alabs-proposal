@@ -153,9 +153,9 @@ Example:
 
     </style>
 
-    <iron-localstorage name="{{votedtracker}}" value="{{voted}}"></iron-localstorage>
-
     <template is="dom-if" if="{{edit}}">
+
+    <iron-localstorage name="{{index}}" value="{{voted}}"></iron-localstorage>
 
 <!--     <iron-pages selected="{{editselected}}"> -->
     <neon-animated-pages
@@ -217,16 +217,12 @@ Example:
 
       <!-- If the voting has ended we don't need to show these buttons -->
       <template is="dom-if" if="{{data.votingactive}}">
-        <template is="dom-if" if="{{!voted}}">
-          <!-- If you haven't already voted, you'll see the voting buttons. -->
-          <div class="votebtns">
-          <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
-          <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
-          </div>
-        </template>
-        <template is="dom-if" if="{{voted}}">
-        You already voted for this proposal.
-        </template>
+
+        <!-- If you haven't already voted, you'll see the voting buttons. -->
+        <div class="votebtns">
+        <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
+        <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
+        </div>
 
       </template>
 
@@ -286,6 +282,11 @@ Example:
 
     is: 'alabs-proposal',
 
+    listeners: {
+        'votetxreceived': '_votetxreceived',
+        'votetxreceived': '_votetxmined'
+    },
+
     properties: {
 
       /**
@@ -328,9 +329,7 @@ Example:
        * @type {{voted: boolean}}
        */
       voted: {
-        type: Boolean,
-        observer: '_votedobserver',
-        notify: true
+        type: Boolean
       },
 
       txhash: {
@@ -421,8 +420,7 @@ Example:
       */
       contractaddr: {
         type: String,
-        value: '',
-        observer: '_contractaddr'
+        value: ''
       },
 
 
@@ -837,6 +835,7 @@ Example:
               self.transactionlog('Transaction success: ', txhash);
               console.log('Tx hash=',txhash);
                self.txhash = txhash;
+
               // set vote status to TxHash received 
               //self.votestatus = 2;
               //self.transactionHash = txhash;
@@ -847,17 +846,12 @@ Example:
     },
 
     _data: function(){
-      console.log(this.data);
-
+      //console.log(this.data);
       //var MyContract = self.web3.eth.contract(self.contractabi);
       //var myContractInstance = MyContract.at(self.contractaddr);
       //var voted = myContractInstance().toNumber();
     },
-    
-    _contractaddr: function() {
-      this.votedtracker = "voted-" + this.contractaddr;
 
-    },
     /**
      * _calccost: this calculates the total of deliverables costs.
      */
@@ -890,6 +884,12 @@ Example:
       this.supportsProposal = false;
       this.currentvote = "against";
       this.pageselected = 1;
+    },
+
+    // event handler
+    _votetxreceived: function(){
+      console.log('TX received');
+      this.voted = true;
     },
 
     saveVote: function() {
@@ -925,9 +925,6 @@ Example:
               console.log('Tx hash=', txhash);
               // this triggers the locals-contractlistener component
               self.txhash = txhash;
-
-              self.set('voted',true);
-
             }
 
             self.transactionlog('Your vote has been added to the blockchain');
@@ -1012,10 +1009,6 @@ Example:
     _pageselected: function(){
       console.log("pageselected is=", this.pageselected);
     },
-    _votedobserver: function(){
-      console.log('voted=',this.voted);
-      this.set('voted',false);
-    }
 
   });
 
