@@ -155,7 +155,6 @@ Example:
 
     <template is="dom-if" if="{{edit}}">
 
-    <iron-localstorage name="{{index}}" value="{{voted}}"></iron-localstorage>
 
 <!--     <iron-pages selected="{{editselected}}"> -->
     <neon-animated-pages
@@ -208,7 +207,9 @@ Example:
       exit-animation="{{exitAnimation}}">
       
       <!-- What you see: non editable view of proposal, ready to vote on. -->
+      
       <section>
+
       <h1>{{data.description}}</h1>
       <!-- <p>{{data.votingdeadline}}</p> -->
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL" locale="EN"></alabs-datetime></p>
@@ -218,11 +219,17 @@ Example:
       <!-- If the voting has ended we don't need to show these buttons -->
       <template is="dom-if" if="{{data.votingactive}}">
 
+      <template is="dom-if" if="{{!voted}}">
         <!-- If you haven't already voted, you'll see the voting buttons. -->
         <div class="votebtns">
         <locals-button on-tap="voteno">Vote <span class="accent">against</span> this proposal</locals-button>
         <locals-button on-tap="voteyes">Vote <span class="accent">for</span> this proposal</locals-button>
         </div>
+      </template>
+
+      <template is="dom-if" if="{{voted}}">
+        <div>You voted already</div>
+      </template>
 
       </template>
 
@@ -434,6 +441,7 @@ Example:
         observer: '_pageselected'
       },
 
+      
       /** The contract application blockchain interface.
       * @type {{contractabi: object}}
       */
@@ -745,6 +753,7 @@ Example:
       this.pageselected = 0;
       this.entryAnimation = "fade-in-animation";
       this.exitAnimation = "fade-out-animation";
+
       // `ready` is called after all elements have been configured, but
       // propagates bottom-up. This element's children are ready, but parents
       // are not.
@@ -752,6 +761,7 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
     },
+
 
     attached: function() {
       this.editselected = 0;
@@ -846,7 +856,10 @@ Example:
     },
 
     _data: function(){
-      //console.log(this.data);
+      console.log(this.data);
+      var voted = localStorage.getItem(this.data.proposalhash);
+      console.log('voted?', voted);
+      this.voted = voted;
       //var MyContract = self.web3.eth.contract(self.contractabi);
       //var myContractInstance = MyContract.at(self.contractaddr);
       //var voted = myContractInstance().toNumber();
@@ -886,10 +899,21 @@ Example:
       this.pageselected = 1;
     },
 
+    setvoted: function(){
+
+      localStorage.setItem(this.data.proposalhash, true);
+      this.voted = true;
+
+// // Retrieve the object from storage
+// var retrievedObject = localStorage.getItem('testObject');
+
+      console.log('vote localstorage: ', this.data.proposalhash, ' set to ', true);
+      // name="{{data.proposalhash}}" value="{{voted}}" 
+    },
+
     // event handler
     _votetxreceived: function(){
       console.log('TX received');
-      this.voted = true;
     },
 
     saveVote: function() {
@@ -923,6 +947,7 @@ Example:
             } else {
               self.transactionlog('Transaction success: ', txhash);
               console.log('Tx hash=', txhash);
+              self.setvoted();
               // this triggers the locals-contractlistener component
               self.txhash = txhash;
             }
