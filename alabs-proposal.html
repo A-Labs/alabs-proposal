@@ -848,7 +848,7 @@ Example:
             } else {
               console.log("Transaction Successful!");
               self.transactionlog('Transaction success: ', txhash);
-              localStorage.setItem(this.data.proposalhash, false);
+              localStorage.setItem(self.data.proposalhash, false);
               console.log('Tx hash=',txhash);
                self.txhash = txhash;
 
