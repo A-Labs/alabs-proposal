@@ -337,7 +337,8 @@ Example:
        * @type {{voted: boolean}}
        */
       voted: {
-        type: Boolean
+        type: Boolean,
+        value: false
       },
 
       txhash: {
@@ -776,6 +777,7 @@ Example:
     toInitstate: function(){
       this.editselected = 0;
       this.pageselected = 0;
+      
 
     },
 
@@ -864,7 +866,7 @@ Example:
     _data: function(){
       console.log(this.data);
       var voted = localStorage.getItem(this.data.proposalhash);
-      console.log('voted?', voted);
+      console.log('voted?', voted, this.data.proposalhash);
       this.voted = voted;
       //var MyContract = self.web3.eth.contract(self.contractabi);
       //var myContractInstance = MyContract.at(self.contractaddr);
