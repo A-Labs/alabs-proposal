@@ -12,6 +12,7 @@ contract owned {
 
     modifier onlyOwner {
         if (msg.sender != owner) throw;
+        _
     }
 
     function transferOwnership(address newOwner) onlyOwner {
