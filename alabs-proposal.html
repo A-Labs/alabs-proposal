@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../locals-button/locals-button.html">
 <link rel="import" href="../locals-item/locals-item.html">
+<link rel="import" href="../locals-icon/locals-icon.html">
 <link rel="import" href="../locals-style/locals-style.html">
 <link rel="import" href="../locals-confirm/locals-confirm.html">
 <link rel="import" href="../locals-input/locals-input.html">
@@ -125,6 +126,29 @@ Example:
         border-bottom: 2px dashed var(--locals-grey3);
       }
 
+      .executed {
+        font-size: 11px;
+        box-sizing: border-box;
+        padding: 12px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .passed {
+        background-color: var(--locals-semigreen);
+        max-width: 315px;
+
+      }
+      .notpassed {
+        background-color: var(--locals-grey1);
+        max-width: 350px;
+      }
+
+      locals-icon {
+        margin-right: 10px;
+      }
+
+
 
     </style>
 
@@ -184,7 +208,7 @@ Example:
       <section>
       <h1>{{data.description}}</h1>
       <!-- <p>{{data.votingdeadline}}</p> -->
-      <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL"></alabs-datetime></p>
+      <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL" locale="EN"></alabs-datetime></p>
       <p><span>{{data.amount}}</span> Δ for <span>{{data.recipient}}</span></p></div>
       <div class="whitespace"></div>
 
@@ -206,16 +230,22 @@ Example:
          -->
 
         <template is="dom-if" if="{{!data.executed}}">
-          <locals-button on-tap="execute"><span class="accent">Execute</span> this proposal</locals-button>
+          <locals-button on-tap="execute" txtcolor="blue"><span class="accent">Execute</span> this proposal</locals-button>
         </template>
 
         <template is="dom-if" if="{{data.executed}}">
-          <p>This Proposal has been executed.</p>
           <template is="dom-if" if="{{!data.passed}}">
-            <p>It has not been passed.</p>
+          <div class="executed notpassed">
+            <locals-icon icon="slash" iconcolor="grey5" class="notpassed" small></locals-icon>
+            <p> This proposal has not been passed.</p>
+          </div>
           </template>
           <template is="dom-if" if="{{data.passed}}">
-            <p>It has been passed.</p>
+          <div class="executed passed">
+          <locals-icon icon="v" iconcolor="green" class="passed" small>
+          </locals-icon>
+          <p>This proposal has been passed.</p>
+          </div>
           </template>
         </template>
 

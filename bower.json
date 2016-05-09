@@ -31,7 +31,8 @@
     "neon-animation": "^1.2.2",
     "locals-confirm": "https://github.com/locals-world/locals-confirm.git",
     "moment": "momentjs#^2.13.0",
-    "locals-loader": "https://github.com/locals-world/locals-loader.git"
+    "locals-loader": "https://github.com/locals-world/locals-loader.git",
+    "locals-icon": "https://github.com/locals-world/locals-icon.git"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
