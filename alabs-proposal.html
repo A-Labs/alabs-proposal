@@ -741,8 +741,7 @@ Example:
     // Element Lifecycle
 
     ready: function() {
-      this.editselected = 0;
-      this.pageselected = 0;
+      this.toInitstate();
       this.entryAnimation = "fade-in-animation";
       this.exitAnimation = "fade-out-animation";
       // `ready` is called after all elements have been configured, but
@@ -754,14 +753,19 @@ Example:
     },
 
     attached: function() {
-      this.editselected = 0;
-      this.pageselected = 0;
+      this.toInitstate();
       // `attached` fires once the element and its parents have been inserted
       // into a document.
       //
       // This is a good place to perform any work related to your element's
       // visual state or active behavior (measuring sizes, beginning animations,
       // loading resources, etc).
+    },
+
+    toInitstate: function(){
+      this.editselected = 0;
+      this.pageselected = 0;
+
     },
 
     _web3observer: function() {
