@@ -862,13 +862,12 @@ Example:
     },
 
     _data: function(){
-      console.log(this.data);
-      var voted = localStorage.getItem(this.data.proposalhash);
-      console.log('voted?', voted);
-      this.voted = voted;
-      //var MyContract = self.web3.eth.contract(self.contractabi);
-      //var myContractInstance = MyContract.at(self.contractaddr);
-      //var voted = myContractInstance().toNumber();
+      if (this.data && this.data.proposalhash){
+        console.log(this.data);
+        var voted = localStorage.getItem(this.data.proposalhash);
+        console.log('voted?', voted);
+        this.voted = voted;        
+      }
     },
 
     /**
