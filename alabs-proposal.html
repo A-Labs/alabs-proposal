@@ -337,7 +337,8 @@ Example:
        * @type {{voted: boolean}}
        */
       voted: {
-        type: Boolean
+        type: Boolean,
+        value: false
       },
 
       txhash: {
@@ -776,6 +777,7 @@ Example:
     toInitstate: function(){
       this.editselected = 0;
       this.pageselected = 0;
+      
 
     },
 
