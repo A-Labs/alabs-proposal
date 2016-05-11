@@ -168,8 +168,11 @@ Example:
       <h1>New proposal</h1>
 <!--       <p>Your account: <span>{{account}}</span> balance: <span>{{balance}}</span></p>
  -->      <p>The current cost for a new proposal is <span>2</span> Î”.</p>
-      <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
-      <div class="whitespace"></div>
+     <!--  <locals-textarea bind-value="{{description}}" label="Proposal description"></locals-textarea>
+      <div class="whitespace"></div> -->
+
+      <ipfs-upload hash="{{description.hash}}" host="/ip4/109.123.70.141/tcp/5001"></ipfs-upload>
+      <locals-input bind-value="{{description.descr}}" value="{{description.descr}}" label="Description"></locals-input>
       <locals-input bind-value="{{budget}}" value="{{budget}}" label="Budget"></locals-input>
       <div class="whitespace"></div>
       <locals-textarea bind-value="{{beneficiary}}" label="Beneficiary"></locals-textarea>
@@ -180,7 +183,8 @@ Example:
     <!-- What you see: preview before submitting proposal -->
     <neon-animatable>
 
-      <h1>{{description}}</h1>
+      <h1>{{description.descr}}</h1>
+      <p>{{description.hash}}</p>
       <div class="from">
       <p><span>{{budget}}</span> Î” for <span>{{beneficiary}}</span></p>
       </div>
@@ -211,7 +215,8 @@ Example:
       
       <section>
 
-      <h1>{{data.description}}</h1>
+      <h1>{{data.description.descr}}</h1>
+      <a href="http://gateway.ipfs.io/ipfs/{{data.description.hash.hash}}" target="_blank">PDF</a>
       <!-- <p>{{data.votingdeadline}}</p> -->
       <div class="from"><p><alabs-datetime timestamp="{{startdate}}" format="LLLL" locale="EN"></alabs-datetime></p>
       <p><span>{{data.amount}}</span> Î” for <span>{{data.recipient}}</span></p></div>
@@ -367,7 +372,12 @@ Example:
       * @type {{description: string}}
       */
       description: {
-        type: String
+        type: Object,
+        value: {
+          descr: 'test',
+          hash: 'ipfshash'
+        },
+        observer: '_description'
       },
 
       /** The start date of the proposal (unixtime)
@@ -792,6 +802,10 @@ Example:
       // Use this to clean up anything you did in `attached`.
     },
 
+    _description: function(){
+      console.log('descr changed; ', this.description);
+    },
+
     // Add 0x to address 
     fixaddress: function(address) {
       function strStartsWith(str, prefix) {
@@ -817,8 +831,10 @@ Example:
       var proposal = {};
       proposal.account = this.fixaddress(this.account);
       proposal.beneficiary = this.beneficiary;
-      proposal.description = this.description;
+      proposal.description = JSON.stringify(this.description);
       proposal.budget = this.budget;
+
+      console.log(JSON.stringify(proposal));
 
       this.transactionlog('savingtoipfs');
 
