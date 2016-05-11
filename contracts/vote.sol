@@ -167,4 +167,9 @@ contract Association is owned {
         // Fire Events
         ProposalTallied(proposalNumber, result, quorum, p.proposalPassed);
     }
+
+       // And because my mist wallet is getting full, we need a suicide function.
+    function kill() { if (msg.sender == owner) suicide(owner); }
+
+
 }
