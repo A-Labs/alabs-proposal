@@ -31,7 +31,7 @@ contract Association is owned {
     uint public numProposals;
     token public sharesTokenAddress;
 
-    event ProposalAdded(uint proposalID, address recipient, uint amount, string description, string ipfshash);
+    event ProposalAdded(uint proposalID, address recipient, uint amount, string description);
     event Voted(uint proposalID, bool position, address voter);
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
@@ -40,7 +40,6 @@ contract Association is owned {
         address recipient;
         uint amount;
         string description;
-        string ipfshash;
         uint votingDeadline;
         bool executed;
         bool proposalPassed;
@@ -80,7 +79,6 @@ contract Association is owned {
         address beneficiary,
         uint etherAmount,
         string JobDescription,
-        string IPFShash,
         bytes transactionBytecode
     )
         onlyShareholders
